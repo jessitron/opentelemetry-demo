@@ -40,9 +40,11 @@ The ever-needed login to the docker, without which skaffold will fail slowly and
 
 `aws ecr get-login-password | docker login --username AWS --password-stdin whatever.repository.url.com`
 
-The --cache-artifacts says, don't rebuild shit. Just try the push again.
+The `--cache-artifacts` says, don't rebuild shit. Just try the push again.
+The `--label skaffold.dev/run-id=...` says, don't generate a unique ID, put it in all the YAML, and cause helm to
+restart every stinking deployment even though they haven't changed.
 
-`skaffold run --cache-artifacts`
+`skaffold run --cache-artifacts --label skaffold.dev/run-id=dammit-skaffold-stop-restarting-everything`
 
 In order to get the builds to run one at a time and stop canceling each other when one failed,
 I added to skaffold.yaml:
@@ -70,5 +72,3 @@ I want to tell my installation to use the regular otel demo images, but at a spe
 The images all go in the same image repository, and then the tags contain both the version and the service name. This is nonstandard and confusing. Maybe it's a github restriction? So, for most services, I want to override the image name (to fix the version of otel-demo) but not the repo; let that be ghcr.io/opentelemetry/opentelemetry-demo. The name should be $IMAGE_VERSION-$SERVICE_NAME_IN_LOWERCASE where $IMAGE_VERSION is in .env in this repo.
 
 I could override that here in skaffold.yaml, or maybe in my helm installation? ... when skaffold runs Helm, how does it keep the values that I put in my original install?
-
-

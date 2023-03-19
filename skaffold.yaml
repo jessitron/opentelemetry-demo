@@ -1,0 +1,118 @@
+apiVersion: skaffold/v4beta2
+kind: Config
+build:
+  artifacts:
+    # image tags are relative; to specify an image repo (e.g. GCR), you
+    # must provide a "default repo" using one of the methods described
+    # here:
+    # https://skaffold.dev/docs/concepts/#image-repository-handling
+    # that's out of date. Try: https://skaffold.dev/docs/environment/image-registries/
+    
+    - image: accountingservice
+      docker:
+        dockerfile: src/accountingservice/Dockerfile
+    - image: adservice
+      docker:
+        dockerfile: src/adservice/Dockerfile
+    - image: cartservice
+      docker:
+        dockerfile: src/cartservice/src/Dockerfile
+    - image: checkoutservice
+      docker:
+        dockerfile: src/checkoutservice/Dockerfile
+    - image: currencyservice
+      context: src/currencyservice
+      docker:
+        dockerfile: src/currencyservice/Dockerfile
+    - image: emailservice
+      context: src/emailservice
+      docker:
+        dockerfile: src/emailservice/Dockerfile
+    - image: featureflagservice
+      docker:
+        dockerfile: src/featureflagservice/Dockerfile
+    - image: frauddetectionservice
+      docker:
+        dockerfile: src/frauddetectionservice/Dockerfile
+    - image: frontend
+      docker:
+        dockerfile: src/frontend/Dockerfile
+    - image: frontendproxy
+      docker:
+        dockerfile: src/frontendproxy/Dockerfile
+    - image: loadgenerator
+      docker:
+        dockerfile: src/loadgenerator/Dockerfile
+    - image: paymentservice
+      docker:
+        dockerfile: src/paymentservice/Dockerfile
+    - image: productcatalogservice
+      docker:
+        dockerfile: src/productcatalogservice/Dockerfile
+    - image: quoteservice
+      docker:
+        dockerfile: src/quoteservice/Dockerfile
+    - image: recommendationservice
+      docker:
+        dockerfile: src/recommendationservice/Dockerfile
+    # Issue with Target Platform and Build Platform build args.
+    # - image: shippingservice
+    #   docker:
+    #     dockerfile: src/shippingservice/Dockerfile
+  tagPolicy:
+    inputDigest: {}
+  local:
+    useBuildkit: false
+portForward:
+- resourceType: service
+  resourceName: workshop-release-frontendproxy
+  namespace: default
+  port: 8080
+deploy:
+  helm:
+    releases:
+      - name: workshop-release
+        repo: https://open-telemetry.github.io/opentelemetry-helm-charts
+        remoteChart: opentelemetry-demo
+        recreatePods: false
+        skipBuildDependencies: false
+        setValues:
+          default:
+            image:
+              pullPolicy: IfNotPresent
+        setValueTemplates:
+          # components.adService.imageOverride.repository: "{{.IMAGE_REPO_adservice}}"
+          # components.adService.imageOverride.tag:  "{{.IMAGE_TAG_adservice}}@{{.IMAGE_DIGEST_adservice}}"
+          # components.accountingService.imageOverride.repository: "{{.IMAGE_REPO_accountingservice}}"
+          # components.accountingService.imageOverride.tag:  "{{.IMAGE_TAG_accountingservice}}@{{.IMAGE_DIGEST_accountingservice}}"
+          # components.cartService.imageOverride.repository: "{{.IMAGE_REPO_cartservice}}"
+          # components.cartService.imageOverride.tag:  "{{.IMAGE_TAG_cartservice}}@{{.IMAGE_DIGEST_cartservice}}"
+          # components.checkoutService.imageOverride.repository: "{{.IMAGE_REPO_checkoutservice}}"
+          # components.checkoutService.imageOverride.tag:  "{{.IMAGE_TAG_checkoutservice}}@{{.IMAGE_DIGEST_checkoutservice}}"
+          # components.currencyService.imageOverride.repository: "{{.IMAGE_REPO_currencyservice}}"
+          # components.currencyService.imageOverride.tag:  "{{.IMAGE_TAG_currencyservice}}@{{.IMAGE_DIGEST_currencyservice}}"
+          # components.emailService.imageOverride.repository: "{{.IMAGE_REPO_emailservice}}"
+          # components.emailService.imageOverride.tag:  "{{.IMAGE_TAG_emailservice}}@{{.IMAGE_DIGEST_emailservice}}"
+          # components.frauddetectionService.imageOverride.repository: "{{.IMAGE_REPO_frauddetectionservice}}"
+          # components.frauddetectionService.imageOverride.tag:  "{{.IMAGE_TAG_frauddetectionservice}}@{{.IMAGE_DIGEST_frauddetectionservice}}"
+          components.frontend.imageOverride.repository: "{{.IMAGE_REPO_frontend}}"
+          components.frontend.imageOverride.tag:  "{{.IMAGE_TAG_frontend}}@{{.IMAGE_DIGEST_frontend}}"
+          # components.frontendProxy.imageOverride.repository: "{{.IMAGE_REPO_frontendproxy}}"
+          # components.frontendProxy.imageOverride.tag:  "{{.IMAGE_TAG_frontendproxy}}@{{.IMAGE_DIGEST_frontendproxy}}"
+          # components.featureflagService.imageOverride.repository: "{{.IMAGE_REPO_featureflagservice}}"
+          # components.featureflagService.imageOverride.tag:  "{{.IMAGE_TAG_featureflagservice}}@{{.IMAGE_DIGEST_featureflagservice}}"
+          # components.loadgenerator.imageOverride.repository: "{{.IMAGE_REPO_loadgenerator}}"
+          # components.loadgenerator.imageOverride.tag:  "{{.IMAGE_TAG_loadgenerator}}@{{.IMAGE_DIGEST_loadgenerator}}"
+          # components.recommendationService.imageOverride.repository: "{{.IMAGE_REPO_recommendationservice}}"
+          # components.recommendationService.imageOverride.tag:  "{{.IMAGE_TAG_recommendationservice}}@{{.IMAGE_DIGEST_recommendationservice}}"
+          # components.quoteService.imageOverride.repository: "{{.IMAGE_REPO_quoteservice}}"
+          # components.quoteService.imageOverride.tag:  "{{.IMAGE_TAG_quoteservice}}@{{.IMAGE_DIGEST_quoteservice}}"
+          # components.productCatalogService.imageOverride.repository: "{{.IMAGE_REPO_productcatalogservice}}"
+          # components.productCatalogService.imageOverride.tag:  "{{.IMAGE_TAG_productcatalogservice}}@{{.IMAGE_DIGEST_productcatalogservice}}"
+          # components.paymentService.imageOverride.repository: "{{.IMAGE_REPO_paymentservice}}"
+          # components.paymentService.imageOverride.tag:  "{{.IMAGE_TAG_paymentservice}}@{{.IMAGE_DIGEST_paymentservice}}"
+          # components.shippingService.imageOverride.repository: "{{.IMAGE_REPO_shippingservice}}"
+          # components.shippingService.imageOverride.tag:  "{{.IMAGE_TAG_shippingservice}}@{{.IMAGE_DIGEST_shippingservice}}"
+        upgradeOnChange: true
+        useHelmSecrets: false
+        wait: false

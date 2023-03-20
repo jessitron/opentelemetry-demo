@@ -13,11 +13,12 @@
 // limitations under the License.
 
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CypressFields } from '../../utils/Cypress';
 import { IProductCartItem } from '../../types/Cart';
 import ProductPrice from '../ProductPrice';
 import * as S from './CartDropdown.styled';
+import { trace } from '@opentelemetry/api';
 
 interface IProps {
   isOpen: boolean;
@@ -25,8 +26,18 @@ interface IProps {
   productList: IProductCartItem[];
 }
 
+function doSomeOtherBananaThings(bc: number) {
+  trace.getTracer('custom bananas').startActiveSpan('bananas 2', s => {
+    console.log('BANANAS 2');
+    s.setAttribute('app.moreBananaCount', bc);
+    s.end();
+  });
+}
+
 const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
   const ref = useRef<HTMLDivElement>(null);
+
+  const [bananaCount, setBananaCount] = useState(0);
 
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
@@ -43,12 +54,31 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
     };
   }, [ref]);
 
+  const bananas = (event: any) => {
+    trace.getTracer('custom bananas').startActiveSpan('bananas', s => {
+      console.log('BANANAS');
+      s.setAttribute('app.prevBananaCount', bananaCount);
+      setBananaCount(bananaCount + 1);
+      doSomeOtherBananaThings(bananaCount);
+      s.setAttribute('event.type', event.type);
+      s.end();
+    });
+  };
+
+  useEffect(() => {
+    trace.getTracer('second custom banana').startActiveSpan('noticed banana', s => {
+      console.log('BANANA COUNTED ' + bananaCount);
+      s.end();
+    });
+  }, [bananaCount]);
+
   return isOpen ? (
     <S.CartDropdown ref={ref} data-cy={CypressFields.CartDropdown}>
       <div>
         <S.Header>
-          <S.Title>Shopping Cart</S.Title>
+          <S.Title>Shopping Cart Dammit</S.Title>
           <span onClick={onClose}>Close</span>
+          <span onClick={bananas}>Try Some Shit</span>
         </S.Header>
         <S.ItemList>
           {!productList.length && <S.EmptyCart>Your shopping cart is empty</S.EmptyCart>}

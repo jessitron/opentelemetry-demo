@@ -32,10 +32,10 @@ const FrontendTracer = async (collectorString: string) => {
     [SemanticResourceAttributes.SERVICE_NAME]: NEXT_PUBLIC_OTEL_SERVICE_NAME,
   });
 
-  const detectedResources = await detectResources({detectors:[browserDetector]});
+  const detectedResources = await detectResources({ detectors: [browserDetector] });
   resource = resource.merge(detectedResources);
   const provider = new WebTracerProvider({
-    resource
+    resource,
   });
 
   provider.addSpanProcessor(new SessionIdProcessor());
@@ -62,10 +62,22 @@ const FrontendTracer = async (collectorString: string) => {
     instrumentations: [
       getWebAutoInstrumentations({
         '@opentelemetry/instrumentation-fetch': {
-          propagateTraceHeaderCorsUrls: /.*/,
+          propagateTraceHeaderCorsUrls: /.*/, // could try without it, since our collector is same-origin
           clearTimingResources: true,
           applyCustomAttributesOnSpan(span) {
             span.setAttribute('app.synthetic_request', 'false');
+          },
+        },
+        '@opentelemetry/instrumentation-user-interaction': {
+          eventNames: ['submit', 'click', 'keypress'],
+          shouldPreventSpanCreation: (event, element, span) => {
+            console.log('WHAT IS IN HERE event and element: ', event, element);
+            span.setAttribute('target.id', element.id);
+            span.setAttribute('target.className', element.className);
+            span.setAttribute('event.positionX', (event as any).clientX);
+            span.setAttribute('event.positionY', (event as any).clientY);
+            span.setAttribute('target.html', element.outerHTML);
+            // etc..
           },
         },
       }),

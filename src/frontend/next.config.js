@@ -24,15 +24,15 @@ const myEnv = dotEnv.config({
 dotenvExpand.expand(myEnv);
 
 const {
-  AD_SERVICE_ADDR = '',
-  CART_SERVICE_ADDR = '',
-  CHECKOUT_SERVICE_ADDR = '',
-  CURRENCY_SERVICE_ADDR = '',
-  PRODUCT_CATALOG_SERVICE_ADDR = '',
-  RECOMMENDATION_SERVICE_ADDR = '',
-  SHIPPING_SERVICE_ADDR = '',
-  ENV_PLATFORM = '',
-  OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
+  AD_SERVICE_ADDR = 'oops, missing service address env var',
+  CART_SERVICE_ADDR = 'oops, missing service address env var',
+  CHECKOUT_SERVICE_ADDR = 'oops, missing service address env var',
+  CURRENCY_SERVICE_ADDR = 'oops, missing service address env var',
+  PRODUCT_CATALOG_SERVICE_ADDR = 'oops, missing service address env var',
+  RECOMMENDATION_SERVICE_ADDR = 'oops, missing service address env var',
+  SHIPPING_SERVICE_ADDR = 'oops, missing service address env var',
+  ENV_PLATFORM = 'oops, missing service address env var',
+  OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = 'oops, missing service address env var',
   OTEL_SERVICE_NAME = 'frontend',
   PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
 } = process.env;

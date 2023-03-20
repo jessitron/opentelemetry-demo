@@ -75,6 +75,8 @@ deploy:
       - name: otel-demo
         repo: https://open-telemetry.github.io/opentelemetry-helm-charts
         remoteChart: opentelemetry-demo
+        valuesFiles:
+          - "../infra/otel-demo-helm/values.yaml"
         recreatePods: false
         skipBuildDependencies: false
         setValues:

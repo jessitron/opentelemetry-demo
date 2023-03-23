@@ -21,6 +21,7 @@ import { Resource, detectResources, browserDetector } from '@opentelemetry/resou
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { SessionIdProcessor } from './SessionIdProcessor';
+import { WebVitalsInstrumentation } from './CoreWebVitals';
 
 const { NEXT_PUBLIC_OTEL_SERVICE_NAME = '', NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '' } =
   typeof window !== 'undefined' ? window.ENV : {};
@@ -60,6 +61,7 @@ const FrontendTracer = async (collectorString: string) => {
   registerInstrumentations({
     tracerProvider: provider,
     instrumentations: [
+      new WebVitalsInstrumentation('martindotnet', '76.8.6'),
       getWebAutoInstrumentations({
         '@opentelemetry/instrumentation-fetch': {
           propagateTraceHeaderCorsUrls: /.*/, // could try without it, since our collector is same-origin
@@ -71,7 +73,7 @@ const FrontendTracer = async (collectorString: string) => {
         '@opentelemetry/instrumentation-user-interaction': {
           eventNames: ['submit', 'click', 'keypress'],
           shouldPreventSpanCreation: (event, element, span) => {
-            console.log('WHAT IS IN HERE event and element: ', event, element);
+            console.log('WHAT IS IN HERE event: ', event);
             span.setAttribute('target.id', element.id);
             span.setAttribute('target.className', element.className);
             span.setAttribute('event.positionX', (event as any).clientX);

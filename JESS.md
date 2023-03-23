@@ -72,3 +72,33 @@ I want to tell my installation to use the regular otel demo images, but at a spe
 The images all go in the same image repository, and then the tags contain both the version and the service name. This is nonstandard and confusing. Maybe it's a github restriction? So, for most services, I want to override the image name (to fix the version of otel-demo) but not the repo; let that be ghcr.io/opentelemetry/opentelemetry-demo. The name should be $IMAGE_VERSION-$SERVICE_NAME_IN_LOWERCASE where $IMAGE_VERSION is in .env in this repo.
 
 I could override that here in skaffold.yaml, or maybe in my helm installation? ... when skaffold runs Helm, how does it keep the values that I put in my original install?
+
+OK, in skaffold.yaml, I referenced the values.yaml in an adjacent repo.
+Not something that makes sense for anyone else but it works for me here.
+
+### frontend messing-around
+
+OK. With Purvi, I added some banana spans to the CartDropdown.tsx
+
+The "Try Some Shit" button only appears when the screen width is low. I don't know how that CSS gets applied.
+
+If you click it, you get a couple spans about bananas. They're separate from each other and from the click that caused them.
+
+I'd like to try:
+
+[] use Promise or setTimeout to make something async, and see if the ZoneContextManager works for it.
+
+[] modify React (like in my node_modules) and see if I can get it to tack the context onto the state.
+
+[] in the click instrumentation, if I add the span context to the event (in FrontendTracer.js) then can I pull that out in the onClick method and use it?
+
+For this, I should get it running locally, but calling into services that run in k8s. If I set env vars as in the FE pod in k8s, this should be doable. That's
+the next thing to try.
+
+#### running locally
+
+copy in the protobuf definitions:
+
+`cp -r ../../pb .`
+
+`next dev`

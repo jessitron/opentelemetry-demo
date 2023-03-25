@@ -11,8 +11,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     console.log('init web vitals, woo');
   }
   private enabled: boolean = false;
-  private tracer: Tracer;
-
+  
   onReport(metric, parentSpanContext) {
     const now = hrTime();
     const webVitalsSpan = this.tracer.startSpan(metric.name, { startTime: now }, parentSpanContext);
@@ -37,8 +36,8 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     this.enabled = true;
 
     // create a parent span that will have all web vitals spans as children
-    this.tracer = trace.getTracer('web-vitals-instrumentation');
     const parentSpan = this.tracer.startSpan('web-vitals');
+    const ctx = parentSpan.spanContext();
     parentSpan.end();
 
     onFID(metric => {

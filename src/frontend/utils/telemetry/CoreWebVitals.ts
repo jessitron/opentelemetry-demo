@@ -1,6 +1,6 @@
 import { onFID, onLCP, onCLS, onINP, onTTFB } from 'web-vitals';
 import { InstrumentationBase, InstrumentationModuleDefinition } from '@opentelemetry/instrumentation';
-import { trace, context } from '@opentelemetry/api';
+import { trace, context, Tracer } from '@opentelemetry/api';
 import { hrTime } from '@opentelemetry/core';
 
 export class WebVitalsInstrumentation extends InstrumentationBase {
@@ -11,12 +11,11 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     console.log('init web vitals, woo');
   }
   private enabled: boolean = false;
+  private tracer: Tracer;
 
   onReport(metric, parentSpanContext) {
     const now = hrTime();
-    const webVitalsSpan = trace
-      .getTracer('web-vitals-instrumentation')
-      .startSpan(metric.name, { startTime: now }, parentSpanContext);
+    const webVitalsSpan = this.tracer.startSpan(metric.name, { startTime: now }, parentSpanContext);
 
     webVitalsSpan.setAttributes({
       [`webvitals.${metric.name}.name`]: metric.name,
@@ -38,7 +37,8 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     this.enabled = true;
 
     // create a parent span that will have all web vitals spans as children
-    const parentSpan = trace.getTracer('web-vitals-instrumentation').startSpan('web-vitals');
+    this.tracer = trace.getTracer('web-vitals-instrumentation');
+    const parentSpan = this.tracer.startSpan('web-vitals');
     const ctx = trace.setSpan(context.active(), parentSpan);
     parentSpan.end();
 

@@ -39,7 +39,6 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     // create a parent span that will have all web vitals spans as children
     this.tracer = trace.getTracer('web-vitals-instrumentation');
     const parentSpan = this.tracer.startSpan('web-vitals');
-    const ctx = trace.setSpan(context.active(), parentSpan);
     parentSpan.end();
 
     onFID(metric => {

@@ -4,6 +4,9 @@ import { trace, context } from '@opentelemetry/api';
 import { hrTime } from '@opentelemetry/core';
 
 export class WebVitalsInstrumentation extends InstrumentationBase {
+  constructor() {
+    super('web-vitals-instrumentation', 'v0.1.0');
+  }
   protected init(): void | InstrumentationModuleDefinition<any> | InstrumentationModuleDefinition<any>[] {
     console.log('init web vitals, woo');
   }

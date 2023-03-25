@@ -61,7 +61,7 @@ const FrontendTracer = async (collectorString: string) => {
   registerInstrumentations({
     tracerProvider: provider,
     instrumentations: [
-      new WebVitalsInstrumentation('martindotnet', '76.8.6'),
+      new WebVitalsInstrumentation(),
       getWebAutoInstrumentations({
         '@opentelemetry/instrumentation-fetch': {
           propagateTraceHeaderCorsUrls: /.*/, // could try without it, since our collector is same-origin

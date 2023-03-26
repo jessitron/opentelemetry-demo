@@ -78,9 +78,9 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
     <S.CartDropdown ref={ref} data-cy={CypressFields.CartDropdown}>
       <div>
         <S.Header>
-          <S.Title>Shopping Cart Dammit</S.Title>
+          <S.Title>Shopping Cart</S.Title>
           <span onClick={onClose}>Close</span>
-          <span onClick={bananas}>Try Some Shit</span>
+          <span onClick={bananas}>Try Something</span>
         </S.Header>
         <S.ItemList>
           {!productList.length && <S.EmptyCart>Your shopping cart is empty</S.EmptyCart>}

@@ -55,10 +55,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
   }, [ref]);
 
   const bananas = (event: any) => {
-    const activeSpan = event['active_span'];
-    console.log('What is this on the event ', activeSpan);
-    const activeContext = activeSpan || context.active();
-    trace.getTracer('custom bananas').startActiveSpan('incrementing banana count', {}, activeContext, s => {
+    trace.getTracer('custom bananas').startActiveSpan('incrementing banana count', s => {
       console.log('BANANAS');
       s.setAttribute('app.prevBananaCount', bananaCount);
       setBananaCount(bananaCount + 1);

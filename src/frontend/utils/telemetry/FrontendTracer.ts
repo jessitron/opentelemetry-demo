@@ -76,7 +76,6 @@ const FrontendTracer = async (collectorString: string) => {
             span.setAttribute('target.id', element.id);
             span.setAttribute('target.className', element.className);
             span.setAttribute('target.html', element.outerHTML);
-            event["active_span"] = trace.getActiveSpan();
           },
         },
       }),

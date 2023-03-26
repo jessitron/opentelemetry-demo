@@ -11,7 +11,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     console.log('init web vitals, woo');
   }
   private enabled: boolean = false;
-  
+
   onReport(metric, parentSpanContext) {
     const now = hrTime();
     const webVitalsSpan = this.tracer.startSpan(metric.name, { startTime: now }, parentSpanContext);
@@ -36,14 +36,11 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     this.enabled = true;
 
     // create a parent span that will have all web vitals spans as children
-    const parentSpan = this.tracer.startSpan('web-vitals');
-    // What the next step should be: const ctx = parentSpan.spanContext();
-    // what the next step is:
-    const ctx = trace.setSpan(context.active(), parentSpan);
-    // I think this is a bug in the otel libraries. There's a "getValue not defined" error in the browser
-    // when passing only the context, without making it the active span for an instant here.
-    // maybe the context manager doesn't save it?
-    parentSpan.end();
+    const ctx = this.tracer.startActiveSpan('web-vitals', s => {
+      const ctx = context.active();
+      s.end();
+      return ctx;
+    });
 
     onFID(metric => {
       this.onReport(metric, ctx);

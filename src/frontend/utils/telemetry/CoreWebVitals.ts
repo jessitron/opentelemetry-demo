@@ -1,6 +1,6 @@
 import { onFID, onLCP, onCLS, onINP, onTTFB } from 'web-vitals';
 import { InstrumentationBase, InstrumentationModuleDefinition } from '@opentelemetry/instrumentation';
-import { trace, context, Tracer } from '@opentelemetry/api';
+import { trace, context } from '@opentelemetry/api';
 import { hrTime } from '@opentelemetry/core';
 
 export class WebVitalsInstrumentation extends InstrumentationBase {

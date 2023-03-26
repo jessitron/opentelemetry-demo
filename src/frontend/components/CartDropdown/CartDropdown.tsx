@@ -18,7 +18,7 @@ import { CypressFields } from '../../utils/Cypress';
 import { IProductCartItem } from '../../types/Cart';
 import ProductPrice from '../ProductPrice';
 import * as S from './CartDropdown.styled';
-import { trace } from '@opentelemetry/api';
+import { trace, context, Span } from '@opentelemetry/api';
 
 interface IProps {
   isOpen: boolean;
@@ -55,7 +55,12 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
   }, [ref]);
 
   const bananas = (event: any) => {
-    trace.getTracer('custom bananas').startActiveSpan('incrementing banana count', s => {
+    const activeSpan = event['active_span'];
+    console.log('What is this on the event ', activeSpan);
+    const activeContext = activeSpan || context.active();
+    trace.getTracer('custom bananas').startActiveSpan('incrementing banana count', 
+    {}, 
+    activeContext, s => {
       console.log('BANANAS');
       s.setAttribute('app.prevBananaCount', bananaCount);
       setBananaCount(bananaCount + 1);

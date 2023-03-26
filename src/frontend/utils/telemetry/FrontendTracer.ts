@@ -22,6 +22,7 @@ import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { SessionIdProcessor } from './SessionIdProcessor';
 import { WebVitalsInstrumentation } from './CoreWebVitals';
+import { trace } from '@opentelemetry/api';
 
 const { NEXT_PUBLIC_OTEL_SERVICE_NAME = '', NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '' } =
   typeof window !== 'undefined' ? window.ENV : {};
@@ -75,6 +76,7 @@ const FrontendTracer = async (collectorString: string) => {
             span.setAttribute('target.id', element.id);
             span.setAttribute('target.className', element.className);
             span.setAttribute('target.html', element.outerHTML);
+            event["active_span"] = trace.getActiveSpan();
           },
         },
       }),

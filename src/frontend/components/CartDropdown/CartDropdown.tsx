@@ -69,6 +69,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
     trace.getTracer('second custom banana').startActiveSpan('noticed banana', s => {
       console.log('BANANA COUNTED ' + bananaCount);
       s.setAttribute('app.bananaCount', bananaCount);
+      setTimeout(() => doSomeOtherBananaThings(bananaCount), 10);
       s.end();
     });
   }, [bananaCount]);

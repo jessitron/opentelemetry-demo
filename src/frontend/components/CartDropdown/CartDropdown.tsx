@@ -27,7 +27,7 @@ interface IProps {
 }
 
 function doSomeOtherBananaThings(bc: number) {
-  trace.getTracer('custom bananas').startActiveSpan('bananas 2', s => {
+  trace.getTracer('custom bananas').startActiveSpan('after a timeout', s => {
     console.log('BANANAS 2');
     s.setAttribute('app.moreBananaCount', bc);
     s.end();
@@ -55,11 +55,11 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
   }, [ref]);
 
   const bananas = (event: any) => {
-    trace.getTracer('custom bananas').startActiveSpan('bananas', s => {
+    trace.getTracer('custom bananas').startActiveSpan('incrementing banana count', s => {
       console.log('BANANAS');
       s.setAttribute('app.prevBananaCount', bananaCount);
       setBananaCount(bananaCount + 1);
-      doSomeOtherBananaThings(bananaCount);
+      setTimeout(() => doSomeOtherBananaThings(bananaCount), 10);
       s.setAttribute('event.type', event.type);
       s.end();
     });

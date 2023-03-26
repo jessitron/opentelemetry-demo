@@ -64,7 +64,6 @@ const FrontendTracer = async (collectorString: string) => {
       new WebVitalsInstrumentation(),
       getWebAutoInstrumentations({
         '@opentelemetry/instrumentation-fetch': {
-          propagateTraceHeaderCorsUrls: /.*/, // could try without it, since our collector is same-origin
           clearTimingResources: true,
           applyCustomAttributesOnSpan(span) {
             span.setAttribute('app.synthetic_request', 'false');
@@ -73,13 +72,9 @@ const FrontendTracer = async (collectorString: string) => {
         '@opentelemetry/instrumentation-user-interaction': {
           eventNames: ['submit', 'click', 'keypress'],
           shouldPreventSpanCreation: (event, element, span) => {
-            console.log('WHAT IS IN HERE event: ', event);
             span.setAttribute('target.id', element.id);
             span.setAttribute('target.className', element.className);
-            span.setAttribute('event.positionX', (event as any).clientX);
-            span.setAttribute('event.positionY', (event as any).clientY);
             span.setAttribute('target.html', element.outerHTML);
-            // etc..
           },
         },
       }),

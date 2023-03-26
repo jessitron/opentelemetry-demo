@@ -34,7 +34,7 @@ FROM node:18-alpine AS runner
 WORKDIR /app
 RUN apk add --no-cache protobuf-dev protoc
 
-ENV NODE_ENV=production
+ENV NODE_ENV=development
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001

@@ -74,7 +74,7 @@ const FrontendTracer = async (collectorString: string) => {
       new UserInteractionInstrumentation({
         eventNames: ['submit', 'click', 'keypress'],
         shouldPreventSpanCreation: (eventType, element, span) => {
-          element['active_span'] = span; // does this work
+          element['active_span'] = span; // does this work? yes for bananas (clicks), no for submit
           span.setAttribute('target.id', element.id);
           span.setAttribute('target.className', element.className);
           span.setAttribute('target.html', element.outerHTML);

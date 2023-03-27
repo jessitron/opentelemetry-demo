@@ -30,7 +30,7 @@ import AdProvider from '../../../providers/Ad.provider';
 import { useCart } from '../../../providers/Cart.provider';
 import * as S from '../../../styles/ProductDetail.styled';
 import { useCurrency } from '../../../providers/Currency.provider';
-import { context, trace, Span } from "@opentelemetry/api";
+import { context, trace, Span } from '@opentelemetry/api';
 
 const quantityOptions = new Array(10).fill(0).map((_, i) => i + 1);
 
@@ -46,9 +46,22 @@ function inSpanSnuckOntoTheEvent(f: OnClickHandler): OnClickHandler {
   };
 }
 
+const tracer = trace.getTracer('push tracer');
+function recordPush(push: (u: string) => Promise<boolean>): (url: string) => Promise<boolean> {
+  return u =>
+    tracer.startActiveSpan('push', s => {
+      s.setAttribute('app.pushUrl', u);
+      return push(u).then(b => {
+        s.setAttribute('app.pushReturned', b);
+        s.end();
+        return b;
+      });
+    });
+}
 
 const ProductDetail: NextPage = () => {
-  const { push, query } = useRouter();
+  const { push: realPush, query } = useRouter();
+  const push = recordPush(realPush);
   const [quantity, setQuantity] = useState(1);
   const {
     addItem,

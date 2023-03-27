@@ -66,12 +66,6 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
   type OnClickHandler = (event: MouseEvent) => void; // something
   function inSpanSnuckOntoTheEvent(f: OnClickHandler): OnClickHandler {
     return event => {
-      // could I get it from the map?
-      const sneakySpanMap = window['sneakyEventSpanMap']();
-      console.log('Bananas. Sneaky span map: ', sneakySpanMap);
-      const sneakySpanMapResult = sneakySpanMap[event];
-      console.log('Bananas. Sneaky span map accessed: ', sneakySpanMapResult);
-
       const sneakySpan = event.target['active_span'] as Span;
       console.log('Looking for a sneaky span. Did I find one? ', sneakySpan);
       if (!sneakySpan) {

@@ -21,7 +21,6 @@ import SessionGateway from '../../gateways/Session.gateway';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
 import * as S from '../../styles/Cart.styled';
-import { trace, context } from '@opentelemetry/api';
 
 const { userId } = SessionGateway.getSession();
 
@@ -34,22 +33,19 @@ const CartDetail = () => {
   const { selectedCurrency } = useCurrency();
   const { push } = useRouter();
 
-  const onPlaceOrder = async ({
-    email,
-    state,
-    streetAddress,
-    country,
-    city,
-    zipCode,
-    creditCardCvv,
-    creditCardExpirationMonth,
-    creditCardExpirationYear,
-    creditCardNumber,
-  }: IFormData) => {
-    // i suspect useCallback destroys context... or maybe it's async
-    console.log('in placeOrder, the context is: ', context.active());
-    trace.getTracer('placing order').startActiveSpan('place order yo', async s => {
-      console.log('jess place order');
+  const onPlaceOrder = useCallback(
+    async ({
+      email,
+      state,
+      streetAddress,
+      country,
+      city,
+      zipCode,
+      creditCardCvv,
+      creditCardExpirationMonth,
+      creditCardExpirationYear,
+      creditCardNumber,
+    }: IFormData) => {
       const order = await placeOrder({
         userId,
         email,
@@ -68,13 +64,14 @@ const CartDetail = () => {
           creditCardNumber,
         },
       });
-      s.end();
+
       push({
         pathname: `/cart/checkout/${order.orderId}`,
         query: { order: JSON.stringify(order) },
       });
-    });
-  };
+    },
+    [placeOrder, push, selectedCurrency]
+  );
 
   return (
     <S.Container>

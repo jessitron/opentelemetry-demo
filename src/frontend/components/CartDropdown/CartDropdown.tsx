@@ -62,7 +62,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
       if (!sneakySpan) {
         return f(event);
       }
-      context.with(trace.setSpan(context.active(), sneakySpan), f(event));
+      context.with(trace.setSpan(context.active(), sneakySpan), () => f(event));
     };
   }
 

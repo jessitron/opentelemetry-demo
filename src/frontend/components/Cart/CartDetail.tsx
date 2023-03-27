@@ -47,7 +47,8 @@ const CartDetail = () => {
       creditCardExpirationYear,
       creditCardNumber,
     }: IFormData) => {
-      trace.getTracer('placing order').startActiveSpan('place order', async s => {
+      trace.getTracer('placing order').startActiveSpan('place order yo', async s => {
+        console.log('jess place order');
         const order = await placeOrder({
           userId,
           email,
@@ -66,12 +67,11 @@ const CartDetail = () => {
             creditCardNumber,
           },
         });
-
+        s.end();
         push({
           pathname: `/cart/checkout/${order.orderId}`,
           query: { order: JSON.stringify(order) },
         });
-        s.end();
       });
     },
     [placeOrder, push, selectedCurrency]

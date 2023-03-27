@@ -13,10 +13,11 @@
 // limitations under the License.
 
 import Link from 'next/link';
-import { useCallback, useState } from 'react';
+import { FormEventHandler, useCallback, useState } from 'react';
 import { CypressFields } from '../../utils/Cypress';
 import Input from '../Input';
 import * as S from './CheckoutForm.styled';
+import { context, Span, trace } from '@opentelemetry/api';
 
 const currentYear = new Date().getFullYear();
 const yearList = Array.from(new Array(20), (v, i) => i + currentYear);
@@ -36,6 +37,18 @@ export interface IFormData {
 
 interface IProps {
   onSubmit(formData: IFormData): void;
+}
+
+type OnSubmitHandler = FormEventHandler<HTMLFormElement>; //(event: MouseEvent) => void; // something
+function inSpanSnuckOntoTheEvent(f: OnSubmitHandler): OnSubmitHandler {
+  return event => {
+    const sneakySpan = event.target['active_span'] as Span;
+    console.log('Looking for a sneaky span. Did I find one? ', sneakySpan);
+    if (!sneakySpan) {
+      return f(event);
+    }
+    context.with(trace.setSpan(context.active(), sneakySpan), () => f(event));
+  };
 }
 
 const CheckoutForm = ({ onSubmit }: IProps) => {
@@ -59,7 +72,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
     city: 'Mountain View',
     state: 'CA',
     country: 'United States',
-    zipCode: "94043",
+    zipCode: '94043',
     creditCardNumber: '4432-8015-6152-0454',
     creditCardCvv: 672,
     creditCardExpirationYear: 2030,
@@ -75,8 +88,9 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
 
   return (
     <S.CheckoutForm
-      onSubmit={event => {
+      onSubmit={inSpanSnuckOntoTheEvent(event => {
         event.preventDefault();
+        console.log('In the onSubmit, context is ', context.active());
         onSubmit({
           email,
           streetAddress,
@@ -89,7 +103,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
           creditCardExpirationYear,
           creditCardNumber,
         });
-      }}
+      })}
     >
       <S.Title>Shipping Address</S.Title>
 
@@ -204,7 +218,9 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
         <Link href="/">
           <S.CartButton $type="secondary">Continue Shopping</S.CartButton>
         </Link>
-        <S.CartButton data-cy={CypressFields.CheckoutPlaceOrder} type="submit">Place Order</S.CartButton>
+        <S.CartButton data-cy={CypressFields.CheckoutPlaceOrder} type="submit">
+          Place Order
+        </S.CartButton>
       </S.SubmitContainer>
     </S.CheckoutForm>
   );

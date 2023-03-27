@@ -21,6 +21,7 @@ import SessionGateway from '../../gateways/Session.gateway';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
 import * as S from '../../styles/Cart.styled';
+import { trace } from '@opentelemetry/api';
 
 const { userId } = SessionGateway.getSession();
 
@@ -46,28 +47,31 @@ const CartDetail = () => {
       creditCardExpirationYear,
       creditCardNumber,
     }: IFormData) => {
-      const order = await placeOrder({
-        userId,
-        email,
-        address: {
-          streetAddress,
-          state,
-          country,
-          city,
-          zipCode,
-        },
-        userCurrency: selectedCurrency,
-        creditCard: {
-          creditCardCvv,
-          creditCardExpirationMonth,
-          creditCardExpirationYear,
-          creditCardNumber,
-        },
-      });
+      trace.getTracer('placing order').startActiveSpan('place order', async s => {
+        const order = await placeOrder({
+          userId,
+          email,
+          address: {
+            streetAddress,
+            state,
+            country,
+            city,
+            zipCode,
+          },
+          userCurrency: selectedCurrency,
+          creditCard: {
+            creditCardCvv,
+            creditCardExpirationMonth,
+            creditCardExpirationYear,
+            creditCardNumber,
+          },
+        });
 
-      push({
-        pathname: `/cart/checkout/${order.orderId}`,
-        query: { order: JSON.stringify(order) },
+        push({
+          pathname: `/cart/checkout/${order.orderId}`,
+          query: { order: JSON.stringify(order) },
+        });
+        s.end();
       });
     },
     [placeOrder, push, selectedCurrency]

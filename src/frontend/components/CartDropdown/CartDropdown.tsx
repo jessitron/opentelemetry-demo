@@ -54,7 +54,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
     };
   }, [ref]);
 
-  type OnClickHandler = (event: MouseEvent) => any; // something
+  type OnClickHandler = (event: MouseEvent) => void; // something
   function inSpanSnuckOntoTheEvent(f: OnClickHandler): OnClickHandler {
     return event => {
       const sneakySpan = event.target['active_span'] as Span;

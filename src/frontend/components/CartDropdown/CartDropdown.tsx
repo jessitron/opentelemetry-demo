@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import { CypressFields } from '../../utils/Cypress';
 import { IProductCartItem } from '../../types/Cart';
 import ProductPrice from '../ProductPrice';
@@ -33,7 +33,7 @@ function doSomeOtherBananaThings(bc: number, desc: string) {
     console.log('BANANAS 2');
     s.setAttribute('app.description', desc);
     s.setAttribute('app.moreBananaCount', bc);
-    return Promise.resolve(
+    const result = Promise.resolve(
       trace.getTracer('custom bananas').startActiveSpan('promised banana things', s => {
         console.log('BANANAS 3');
         s.setAttribute('app.description', desc);
@@ -42,6 +42,7 @@ function doSomeOtherBananaThings(bc: number, desc: string) {
       })
     );
     s.end();
+    return result;
   });
 }
 
@@ -65,7 +66,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
     };
   }, [ref]);
 
-  type OnClickHandler = (event: MouseEvent) => void; // something
+  type OnClickHandler = MouseEventHandler<HTMLSpanElement>; // something
   function inSpanSnuckOntoTheEvent(f: OnClickHandler): OnClickHandler {
     return event => {
       const sneakySpan = event.target['active_span'] as Span;
@@ -76,7 +77,6 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
       context.with(trace.setSpan(context.active(), sneakySpan), () => f(event));
     };
   }
-
 
   const bananas = (event: any) => {
     return tracer.startActiveSpan('incrementing banana count', async s => {
@@ -105,7 +105,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
         <S.Header>
           <S.Title>Shopping Cart</S.Title>
           <span onClick={onClose}>Close</span>
-          <span onClick={inSpanSnuckOntoTheEvent(bananas) as any}>Try Something</span>
+          <span onClick={inSpanSnuckOntoTheEvent(bananas)}>Try Something</span>
         </S.Header>
         <S.ItemList>
           {!productList.length && <S.EmptyCart>Your shopping cart is empty</S.EmptyCart>}

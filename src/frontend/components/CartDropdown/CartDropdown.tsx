@@ -54,6 +54,17 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
     };
   }, [ref]);
 
+  type OnClickHandler = (event: MouseEvent) => any; // something
+  function inSpanSnuckOntoTheEvent(f: OnClickHandler): OnClickHandler {
+    return event => {
+      const sneakySpan = event['active_span'] as Span;
+      if (!sneakySpan) {
+        return f(event);
+      }
+      context.with(trace.setSpan(context.active(), sneakySpan), f(event));
+    };
+  }
+
   const bananas = (event: any) => {
     trace.getTracer('custom bananas').startActiveSpan('incrementing banana count', s => {
       console.log('BANANAS');
@@ -81,7 +92,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
         <S.Header>
           <S.Title>Shopping Cart</S.Title>
           <span onClick={onClose}>Close</span>
-          <span onClick={bananas}>Try Something</span>
+          <span onClick={inSpanSnuckOntoTheEvent(bananas) as any}>Try Something</span>
         </S.Header>
         <S.ItemList>
           {!productList.length && <S.EmptyCart>Your shopping cart is empty</S.EmptyCart>}

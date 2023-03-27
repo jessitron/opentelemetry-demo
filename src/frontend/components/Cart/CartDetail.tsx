@@ -34,48 +34,47 @@ const CartDetail = () => {
   const { selectedCurrency } = useCurrency();
   const { push } = useRouter();
 
-  const onPlaceOrder = useCallback(
-    async ({
-      email,
-      state,
-      streetAddress,
-      country,
-      city,
-      zipCode,
-      creditCardCvv,
-      creditCardExpirationMonth,
-      creditCardExpirationYear,
-      creditCardNumber,
-    }: IFormData) => {
-      trace.getTracer('placing order').startActiveSpan('place order yo', async s => {
-        console.log('jess place order');
-        const order = await placeOrder({
-          userId,
-          email,
-          address: {
-            streetAddress,
-            state,
-            country,
-            city,
-            zipCode,
-          },
-          userCurrency: selectedCurrency,
-          creditCard: {
-            creditCardCvv,
-            creditCardExpirationMonth,
-            creditCardExpirationYear,
-            creditCardNumber,
-          },
-        });
-        s.end();
-        push({
-          pathname: `/cart/checkout/${order.orderId}`,
-          query: { order: JSON.stringify(order) },
-        });
+  const onPlaceOrder = async ({
+    email,
+    state,
+    streetAddress,
+    country,
+    city,
+    zipCode,
+    creditCardCvv,
+    creditCardExpirationMonth,
+    creditCardExpirationYear,
+    creditCardNumber,
+  }: IFormData) => {
+    // i suspect useCallback destroys context
+    console.log("in placeOrder, the context is: ", context.active())
+    trace.getTracer('placing order').startActiveSpan('place order yo', async s => {
+      console.log('jess place order');
+      const order = await placeOrder({
+        userId,
+        email,
+        address: {
+          streetAddress,
+          state,
+          country,
+          city,
+          zipCode,
+        },
+        userCurrency: selectedCurrency,
+        creditCard: {
+          creditCardCvv,
+          creditCardExpirationMonth,
+          creditCardExpirationYear,
+          creditCardNumber,
+        },
       });
-    },
-    [placeOrder, push, selectedCurrency]
-  );
+      s.end();
+      push({
+        pathname: `/cart/checkout/${order.orderId}`,
+        query: { order: JSON.stringify(order) },
+      });
+    });
+  };
 
   return (
     <S.Container>

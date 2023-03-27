@@ -26,12 +26,14 @@ interface IProps {
   productList: IProductCartItem[];
 }
 
-function doSomeOtherBananaThings(bc: number) {
+function doSomeOtherBananaThings(bc: number, desc: string) {
   trace.getTracer('custom bananas').startActiveSpan('after a timeout banana', s => {
     console.log('BANANAS 2');
+    s.setAttribute('app.description', desc);
     s.setAttribute('app.moreBananaCount', bc);
     s.end();
   });
+  return Promise.resolve();
 }
 
 const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
@@ -66,13 +68,13 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
     };
   }
 
-  const bananas = (event: any) => {
-    trace.getTracer('custom bananas').startActiveSpan('incrementing banana count', s => {
+  const bananas = async (event: any) => {
+    return trace.getTracer('custom bananas').startActiveSpan('incrementing banana count', async s => {
       console.log('BANANAS');
       console.log("event.target['active_span'] ", event.target['active_span'], event.target);
       s.setAttribute('app.prevBananaCount', bananaCount);
       setBananaCount(bananaCount + 1);
-      setTimeout(() => doSomeOtherBananaThings(bananaCount), 10);
+      await doSomeOtherBananaThings(bananaCount, 'awaiting');
       s.setAttribute('event.type', event.type);
       s.end();
     });
@@ -82,7 +84,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
     trace.getTracer('second custom banana').startActiveSpan('noticed banana', s => {
       console.log('BANANA COUNTED ' + bananaCount);
       s.setAttribute('app.bananaCount', bananaCount);
-      setTimeout(() => doSomeOtherBananaThings(bananaCount), 10);
+      setTimeout(() => doSomeOtherBananaThings(bananaCount, '10 ms later'), 10);
       s.end();
     });
   }, [bananaCount]);

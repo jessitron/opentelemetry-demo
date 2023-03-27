@@ -43,6 +43,8 @@ type OnSubmitHandler = FormEventHandler<HTMLFormElement>; //(event: MouseEvent) 
 function inSpanSnuckOntoTheEvent(f: OnSubmitHandler): OnSubmitHandler {
   return event => {
     const sneakySpan = event.target['active_span'] as Span;
+    console.log('The event in CheckoutForm is:', event);
+    console.log('The event target is:', event.target);
     console.log('Looking for a sneaky span. Did I find one? ', sneakySpan);
     if (!sneakySpan) {
       return f(event);

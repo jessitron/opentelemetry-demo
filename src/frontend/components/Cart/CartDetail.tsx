@@ -21,7 +21,7 @@ import SessionGateway from '../../gateways/Session.gateway';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
 import * as S from '../../styles/Cart.styled';
-import { trace } from '@opentelemetry/api';
+import { trace, context } from '@opentelemetry/api';
 
 const { userId } = SessionGateway.getSession();
 
@@ -46,8 +46,8 @@ const CartDetail = () => {
     creditCardExpirationYear,
     creditCardNumber,
   }: IFormData) => {
-    // i suspect useCallback destroys context
-    console.log("in placeOrder, the context is: ", context.active())
+    // i suspect useCallback destroys context... or maybe it's async
+    console.log('in placeOrder, the context is: ', context.active());
     trace.getTracer('placing order').startActiveSpan('place order yo', async s => {
       console.log('jess place order');
       const order = await placeOrder({

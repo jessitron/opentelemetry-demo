@@ -22,6 +22,8 @@ import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { SessionIdProcessor } from './SessionIdProcessor';
 import { WebVitalsInstrumentation } from './CoreWebVitals';
+import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch';
+import { UserInteractionInstrumentation } from '@opentelemetry/instrumentation-user-interaction';
 import { trace } from '@opentelemetry/api';
 
 const { NEXT_PUBLIC_OTEL_SERVICE_NAME = '', NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '' } =
@@ -63,21 +65,19 @@ const FrontendTracer = async (collectorString: string) => {
     tracerProvider: provider,
     instrumentations: [
       new WebVitalsInstrumentation(),
-      getWebAutoInstrumentations({
-        '@opentelemetry/instrumentation-fetch': {
-          clearTimingResources: true,
-          applyCustomAttributesOnSpan(span) {
-            span.setAttribute('app.synthetic_request', 'false');
-          },
+      new FetchInstrumentation({
+        clearTimingResources: true,
+        applyCustomAttributesOnSpan(span) {
+          span.setAttribute('app.synthetic_request', 'false');
         },
-        '@opentelemetry/instrumentation-user-interaction': {
-          eventNames: ['submit', 'click', 'keypress'],
-          shouldPreventSpanCreation: (eventType, element, span) => {
-            element['active_span'] = span; // does this work
-            span.setAttribute('target.id', element.id);
-            span.setAttribute('target.className', element.className);
-            span.setAttribute('target.html', element.outerHTML);
-          },
+      }),
+      new UserInteractionInstrumentation({
+        eventNames: ['submit', 'click', 'keypress'],
+        shouldPreventSpanCreation: (eventType, element, span) => {
+          element['active_span'] = span; // does this work
+          span.setAttribute('target.id', element.id);
+          span.setAttribute('target.className', element.className);
+          span.setAttribute('target.html', element.outerHTML);
         },
       }),
     ],

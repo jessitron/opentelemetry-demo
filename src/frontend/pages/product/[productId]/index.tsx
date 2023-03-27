@@ -15,7 +15,7 @@
 import { NextPage } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { MouseEventHandler, useCallback, useState } from 'react';
 import { useQuery } from 'react-query';
 import Ad from '../../../components/Ad';
 import Footer from '../../../components/Footer';
@@ -30,8 +30,22 @@ import AdProvider from '../../../providers/Ad.provider';
 import { useCart } from '../../../providers/Cart.provider';
 import * as S from '../../../styles/ProductDetail.styled';
 import { useCurrency } from '../../../providers/Currency.provider';
+import { context, trace, Span } from "@opentelemetry/api";
 
 const quantityOptions = new Array(10).fill(0).map((_, i) => i + 1);
+
+type OnClickHandler = MouseEventHandler<HTMLSpanElement>; // something
+function inSpanSnuckOntoTheEvent(f: OnClickHandler): OnClickHandler {
+  return event => {
+    const sneakySpan = event.target['active_span'] as Span;
+    console.log('Product. Looking for a sneaky span. Did I find one? ', sneakySpan);
+    if (!sneakySpan) {
+      return f(event);
+    }
+    context.with(trace.setSpan(context.active(), sneakySpan), () => f(event));
+  };
+}
+
 
 const ProductDetail: NextPage = () => {
   const { push, query } = useRouter();
@@ -94,7 +108,7 @@ const ProductDetail: NextPage = () => {
                   </option>
                 ))}
               </Select>
-              <S.AddToCart data-cy={CypressFields.ProductAddToCart} onClick={onAddItem}>
+              <S.AddToCart data-cy={CypressFields.ProductAddToCart} onClick={inSpanSnuckOntoTheEvent(onAddItem)}>
                 <Image src="/icons/Cart.svg" height="15px" width="15px" alt="cart" /> Add To Cart
               </S.AddToCart>
             </S.Details>

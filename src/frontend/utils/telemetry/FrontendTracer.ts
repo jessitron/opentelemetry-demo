@@ -72,7 +72,8 @@ const FrontendTracer = async (collectorString: string) => {
         },
         '@opentelemetry/instrumentation-user-interaction': {
           eventNames: ['submit', 'click', 'keypress'],
-          shouldPreventSpanCreation: (event, element, span) => {
+          shouldPreventSpanCreation: (eventType, element, span) => {
+            element['active_span'] = span; // does this work
             span.setAttribute('target.id', element.id);
             span.setAttribute('target.className', element.className);
             span.setAttribute('target.html', element.outerHTML);

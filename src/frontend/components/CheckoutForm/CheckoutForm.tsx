@@ -42,6 +42,11 @@ interface IProps {
 type OnSubmitHandler = FormEventHandler<HTMLFormElement>; //(event: MouseEvent) => void; // something
 function inSpanSnuckOntoTheEvent(f: OnSubmitHandler): OnSubmitHandler {
   return event => {
+    const sneakySpanMap = window['sneakyEventSpanMap']();
+    console.log('Checkout. Sneaky span map: ', sneakySpanMap);
+    const sneakySpanMapResult = sneakySpanMap[event];
+    console.log('Checkout. Sneaky span map accessed: ', sneakySpanMapResult);
+
     const sneakySpan = event.target['active_span'] as Span;
     console.log('The event in CheckoutForm is:', event);
     console.log('The event target is:', event.target);

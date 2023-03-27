@@ -61,6 +61,20 @@ const FrontendTracer = async (collectorString: string) => {
     }),
   });
 
+  const uii = new UserInteractionInstrumentation({
+    eventNames: ['submit', 'click', 'keypress'],
+    shouldPreventSpanCreation: (eventType, element, span) => {
+      element['active_span'] = span; // does this work
+      span.setAttribute('target.id', element.id);
+      span.setAttribute('target.className', element.className);
+      span.setAttribute('target.html', element.outerHTML);
+    },
+  });
+
+  window['sneakyEventSpanMap'] = () => {
+    return uii['_eventsSpanMap'];
+  };
+
   registerInstrumentations({
     tracerProvider: provider,
     instrumentations: [
@@ -71,15 +85,7 @@ const FrontendTracer = async (collectorString: string) => {
           span.setAttribute('app.synthetic_request', 'false');
         },
       }),
-      new UserInteractionInstrumentation({
-        eventNames: ['submit', 'click', 'keypress'],
-        shouldPreventSpanCreation: (eventType, element, span) => {
-          element['active_span'] = span; // does this work
-          span.setAttribute('target.id', element.id);
-          span.setAttribute('target.className', element.className);
-          span.setAttribute('target.html', element.outerHTML);
-        },
-      }),
+      uii,
     ],
   });
 };

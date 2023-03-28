@@ -86,14 +86,14 @@ If you click it, you get a couple spans about bananas. They're separate from eac
 
 I'd like to try:
 
-[] use Promise or setTimeout to make something async, and see if the ZoneContextManager works for it.
+[x] use Promise or setTimeout to make something async, and see if the ZoneContextManager works for it. (yes; see bananas)
 
-[] modify React (like in my node_modules) and see if I can get it to tack the context onto the state.
+[] modify React (like in my node_modules) and see if I can get it to tack the context onto the state. (so hard, plus then I have to get it to deploy with local node_modules)
 
-[] in the click instrumentation, if I add the span context to the event (in FrontendTracer.js) then can I pull that out in the onClick method and use it?
+[] in the click instrumentation, if I add the span context to the element (in FrontendTracer.js) then can I pull that out in the onClick method and use it? (yes; see CartDropdown.tsx)
 
 For this, I should get it running locally, but calling into services that run in k8s. If I set env vars as in the FE pod in k8s, this should be doable. That's
-the next thing to try.
+the next thing to try. <- this doesn't work because it wants to call into them with gRPC... that sounds hard. They aren't exposed.
 
 #### running locally
 
@@ -102,3 +102,5 @@ copy in the protobuf definitions:
 `cp -r ../../pb .`
 
 `next dev`
+
+This doesn't do much because no services

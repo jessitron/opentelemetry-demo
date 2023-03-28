@@ -24,7 +24,6 @@ import { SessionIdProcessor } from './SessionIdProcessor';
 import { WebVitalsInstrumentation } from './CoreWebVitals';
 import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch';
 import { UserInteractionInstrumentation } from '@opentelemetry/instrumentation-user-interaction';
-import { trace } from '@opentelemetry/api';
 
 const { NEXT_PUBLIC_OTEL_SERVICE_NAME = '', NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '' } =
   typeof window !== 'undefined' ? window.ENV : {};
@@ -65,19 +64,21 @@ const FrontendTracer = async (collectorString: string) => {
     tracerProvider: provider,
     instrumentations: [
       new WebVitalsInstrumentation(),
-      new FetchInstrumentation({
-        clearTimingResources: true,
-        applyCustomAttributesOnSpan(span) {
-          span.setAttribute('app.synthetic_request', 'false');
+      getWebAutoInstrumentations({
+        '@opentelemetry/instrumentation-fetch': {
+          clearTimingResources: true,
+          applyCustomAttributesOnSpan(span) {
+            span.setAttribute('app.synthetic_request', 'false');
+          },
         },
-      }),
-      new UserInteractionInstrumentation({
-        eventNames: ['submit', 'click', 'keypress'],
-        shouldPreventSpanCreation: (eventType, element, span) => {
-          element['active_span'] = span; // does this work? yes for bananas (clicks), no for submit
-          span.setAttribute('target.id', element.id);
-          span.setAttribute('target.className', element.className);
-          span.setAttribute('target.html', element.outerHTML);
+        '@opentelemetry/instrumentation-user-interaction': {
+          eventNames: ['submit', 'click', 'keypress'],
+          shouldPreventSpanCreation: (eventType, element, span) => {
+            element['active_span'] = span; // does this work? yes for bananas (clicks), no for submit
+            span.setAttribute('target.id', element.id);
+            span.setAttribute('target.className', element.className);
+            span.setAttribute('target.html', element.outerHTML);
+          },
         },
       }),
     ],

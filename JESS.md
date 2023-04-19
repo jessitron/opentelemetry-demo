@@ -90,7 +90,7 @@ I'd like to try:
 
 [] modify React (like in my node_modules) and see if I can get it to tack the context onto the state. (so hard, plus then I have to get it to deploy with local node_modules)
 
-[] in the click instrumentation, if I add the span context to the element (in FrontendTracer.js) then can I pull that out in the onClick method and use it? (yes; see CartDropdown.tsx)
+[x] in the click instrumentation, if I add the span context to the element (in FrontendTracer.js) then can I pull that out in the onClick method and use it? (yes; see CartDropdown.tsx)
 
 For this, I should get it running locally, but calling into services that run in k8s. If I set env vars as in the FE pod in k8s, this should be doable. That's
 the next thing to try. <- this doesn't work because it wants to call into them with gRPC... that sounds hard. They aren't exposed.
@@ -104,3 +104,32 @@ copy in the protobuf definitions:
 `next dev`
 
 This doesn't do much because no services
+
+
+# upgrading this repo
+
+I want to bring in the latest changes from open-telemetry/opentelemetry-demo
+
+I can `git fetch --all` and `git merge otel/main` to merge the changes in
+
+I can find the latest release of the demo at [https://github.com/open-telemetry/opentelemetry-demo/releases]()
+but I'm not sure what that accomplishes
+
+This page looks useful: https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-demo/UPGRADING.md
+
+Updating the helm chart version in skaffold.yamlst
+
+
+Pull in the latest chart:
+
+` helm repo update open-telemetry`
+
+looks like I should first
+
+(from ../infra/otel-demo-helm)
+
+`helm uninstall otel-demo`
+
+and then 
+
+`helm install otel-demo` (with the new chart version)

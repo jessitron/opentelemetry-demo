@@ -72,7 +72,7 @@ portForward:
 deploy:
   helm:
     releases:
-      - name: otel-demo
+      - name: sso-demo
         repo: https://open-telemetry.github.io/opentelemetry-helm-charts
         remoteChart: opentelemetry-demo
         version: "0.22.0"

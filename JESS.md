@@ -132,4 +132,7 @@ looks like I should first
 
 and then 
 
-`helm install otel-demo` (with the new chart version)
+`helm install otel-demo open-telemetry/opentelemetry-demo --values values.yaml` (with the new chart version)
+
+... then there were various errors with kubernetes so I'm destroying and rebuilding the cluster
+

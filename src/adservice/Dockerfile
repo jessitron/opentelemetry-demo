@@ -6,7 +6,7 @@ FROM eclipse-temurin:17-jdk AS builder
 
 WORKDIR /usr/src/app/
 
-COPY ./src/adservice/gradlew* ./src/adservice/settings.gradle* ./src/adservice/build.gradle .
+COPY ./src/adservice/gradlew* ./src/adservice/settings.gradle* ./src/adservice/build.gradle ./
 COPY ./src/adservice/gradle ./gradle
 
 RUN ./gradlew

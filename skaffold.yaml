@@ -2,59 +2,53 @@ apiVersion: skaffold/v4beta2
 kind: Config
 build:
   artifacts:
-    # image tags are relative; to specify an image repo (e.g. GCR), you
-    # must provide a "default repo" using one of the methods described
-    # here:
-    # https://skaffold.dev/docs/concepts/#image-repository-handling
-    # that's out of date. Try: https://skaffold.dev/docs/environment/image-registries/
-
-    # - image: accountingservice
-    #   docker:
-    #     dockerfile: src/accountingservice/Dockerfile
-    # - image: adservice
-    #   docker:
-    #     dockerfile: src/adservice/Dockerfile
-    # - image: cartservice
-    #   docker:
-    #     dockerfile: src/cartservice/src/Dockerfile
-    # - image: checkoutservice
-    #   docker:
-    #     dockerfile: src/checkoutservice/Dockerfile
-    # - image: currencyservice
-    #   context: src/currencyservice
-    #   docker:
-    #     dockerfile: src/currencyservice/Dockerfile
-    # - image: emailservice
-    #   context: src/emailservice
-    #   docker:
-    #     dockerfile: src/emailservice/Dockerfile
+    - image: accountingservice
+      docker:
+        dockerfile: src/accountingservice/Dockerfile
+    - image: adservice
+      docker:
+        dockerfile: src/adservice/Dockerfile
+    - image: cartservice
+      docker:
+        dockerfile: src/cartservice/src/Dockerfile
+    - image: checkoutservice
+      docker:
+        dockerfile: src/checkoutservice/Dockerfile
+    - image: currencyservice
+      context: src/currencyservice
+      docker:
+        dockerfile: src/currencyservice/Dockerfile
+    - image: emailservice
+      context: src/emailservice
+      docker:
+        dockerfile: src/emailservice/Dockerfile
     # - image: featureflagservice
     #   docker:
     #     dockerfile: src/featureflagservice/Dockerfile
-    # - image: frauddetectionservice
-    #   docker:
-    #     dockerfile: src/frauddetectionservice/Dockerfile
+    - image: frauddetectionservice
+      docker:
+        dockerfile: src/frauddetectionservice/Dockerfile
     - image: frontend
       docker:
         dockerfile: src/frontend/Dockerfile
-    # - image: frontendproxy
-    #   docker:
-    #     dockerfile: src/frontendproxy/Dockerfile
-    # - image: loadgenerator
-    #   docker:
-    #     dockerfile: src/loadgenerator/Dockerfile
-    # - image: paymentservice
-    #   docker:
-    #     dockerfile: src/paymentservice/Dockerfile
-    # - image: productcatalogservice
-    #   docker:
-    #     dockerfile: src/productcatalogservice/Dockerfile
-    # - image: quoteservice
-    #   docker:
-    #     dockerfile: src/quoteservice/Dockerfile
-    # - image: recommendationservice
-    #   docker:
-    #     dockerfile: src/recommendationservice/Dockerfile
+    - image: frontendproxy
+      docker:
+        dockerfile: src/frontendproxy/Dockerfile
+    - image: loadgenerator
+      docker:
+        dockerfile: src/loadgenerator/Dockerfile
+    - image: paymentservice
+      docker:
+        dockerfile: src/paymentservice/Dockerfile
+    - image: productcatalogservice
+      docker:
+        dockerfile: src/productcatalogservice/Dockerfile
+    - image: quoteservice
+      docker:
+        dockerfile: src/quoteservice/Dockerfile
+    - image: recommendationservice
+      docker:
+        dockerfile: src/recommendationservice/Dockerfile
     # Issue with Target Platform and Build Platform build args.
     # - image: shippingservice
     #   docker:
@@ -75,7 +69,7 @@ deploy:
       - name: sso-demo
         repo: https://open-telemetry.github.io/opentelemetry-helm-charts
         remoteChart: opentelemetry-demo
-        version: "0.22.0"
+        version: "0.22.3"
         valuesFiles:
           - "../infra/otel-demo-helm/values.yaml"
         recreatePods: false
@@ -85,9 +79,8 @@ deploy:
             image:
               pullPolicy: IfNotPresent
         setValueTemplates:
-          components.frontend.imageOverride.repository: "{{.IMAGE_REPO_frontend}}"
           components.frontend.imageOverride.tag: "{{.IMAGE_TAG_frontend}}@{{.IMAGE_DIGEST_frontend}}"
-          # # components.adService.imageOverride.repository: "{{.IMAGE_REPO_adservice}}"
+          components.frontend.imageOverride.repository: "{{.IMAGE_REPO_frontend}}"
           # components.adService.imageOverride.tag: "1.3.1-adservice"
           # # components.accountingService.imageOverride.repository: "{{.IMAGE_REPO_accountingservice}}"
           # components.accountingService.imageOverride.tag: "1.3.1-accountingservice"

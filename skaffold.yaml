@@ -2,53 +2,53 @@ apiVersion: skaffold/v4beta2
 kind: Config
 build:
   artifacts:
-    - image: accountingservice
-      docker:
-        dockerfile: src/accountingservice/Dockerfile
-    - image: adservice
-      docker:
-        dockerfile: src/adservice/Dockerfile
-    - image: cartservice
-      docker:
-        dockerfile: src/cartservice/src/Dockerfile
-    - image: checkoutservice
-      docker:
-        dockerfile: src/checkoutservice/Dockerfile
-    - image: currencyservice
-      context: src/currencyservice
-      docker:
-        dockerfile: src/currencyservice/Dockerfile
-    - image: emailservice
-      context: src/emailservice
-      docker:
-        dockerfile: src/emailservice/Dockerfile
+    # - image: accountingservice
+    #   docker:
+    #     dockerfile: src/accountingservice/Dockerfile
+    # - image: adservice
+    #   docker:
+    #     dockerfile: src/adservice/Dockerfile
+    # - image: cartservice
+    #   docker:
+    #     dockerfile: src/cartservice/src/Dockerfile
+    # - image: checkoutservice
+    #   docker:
+    #     dockerfile: src/checkoutservice/Dockerfile
+    # - image: currencyservice
+    #   context: src/currencyservice
+    #   docker:
+    #     dockerfile: src/currencyservice/Dockerfile
+    # - image: emailservice
+    #   context: src/emailservice
+    #   docker:
+    #     dockerfile: src/emailservice/Dockerfile
     # - image: featureflagservice
     #   docker:
     #     dockerfile: src/featureflagservice/Dockerfile
-    - image: frauddetectionservice
-      docker:
-        dockerfile: src/frauddetectionservice/Dockerfile
+    # - image: frauddetectionservice
+    #   docker:
+    #     dockerfile: src/frauddetectionservice/Dockerfile
     - image: frontend
       docker:
         dockerfile: src/frontend/Dockerfile
-    - image: frontendproxy
-      docker:
-        dockerfile: src/frontendproxy/Dockerfile
-    - image: loadgenerator
-      docker:
-        dockerfile: src/loadgenerator/Dockerfile
-    - image: paymentservice
-      docker:
-        dockerfile: src/paymentservice/Dockerfile
-    - image: productcatalogservice
-      docker:
-        dockerfile: src/productcatalogservice/Dockerfile
-    - image: quoteservice
-      docker:
-        dockerfile: src/quoteservice/Dockerfile
-    - image: recommendationservice
-      docker:
-        dockerfile: src/recommendationservice/Dockerfile
+    # - image: frontendproxy
+    #   docker:
+    #     dockerfile: src/frontendproxy/Dockerfile
+    # - image: loadgenerator
+    #   docker:
+    #     dockerfile: src/loadgenerator/Dockerfile
+    # - image: paymentservice
+    #   docker:
+    #     dockerfile: src/paymentservice/Dockerfile
+    # - image: productcatalogservice
+    #   docker:
+    #     dockerfile: src/productcatalogservice/Dockerfile
+    # - image: quoteservice
+    #   docker:
+    #     dockerfile: src/quoteservice/Dockerfile
+    # - image: recommendationservice
+    #   docker:
+    #     dockerfile: src/recommendationservice/Dockerfile
     # Issue with Target Platform and Build Platform build args.
     # - image: shippingservice
     #   docker:
@@ -66,7 +66,7 @@ portForward:
 deploy:
   helm:
     releases:
-      - name: sso-demo
+      - name: otel-demo
         repo: https://open-telemetry.github.io/opentelemetry-helm-charts
         remoteChart: opentelemetry-demo
         version: "0.22.3"

@@ -1,3 +1,14 @@
+# Making shit do things
+
+OK fuck skaffold. Goddammit. It does way too much and takes way too long.
+
+All I want to do is deploy the frontend service.
+
+Now there's a script deploy-frontend.sh, and a deployment.yaml, in src/frontend
+
+This will push an image and then alter the deployment to use it. Just for the one service. It won't try to restart the whole fucking helm chart.
+
+
 # changes i made
 
 OK, I brought in a skaffold.yaml (copied Martin's from martinjt fork)

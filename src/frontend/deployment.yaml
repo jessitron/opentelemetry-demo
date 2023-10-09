@@ -1,0 +1,79 @@
+# generated with a helm upgrade --dry-run
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-demo-frontend
+  labels:
+    helm.sh/chart: opentelemetry-demo-0.25.4
+    
+    opentelemetry.io/name: otel-demo-frontend
+    app.kubernetes.io/instance: otel-demo
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: otel-demo-frontend
+    app.kubernetes.io/version: "1.5.0"
+    app.kubernetes.io/part-of: opentelemetry-demo
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      opentelemetry.io/name: otel-demo-frontend
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: otel-demo-frontend
+        app.kubernetes.io/instance: otel-demo
+        app.kubernetes.io/component: frontend
+        app.kubernetes.io/name: otel-demo-frontend
+    spec:
+      serviceAccountName: otel-demo
+      containers:
+        - name: frontend
+          image: 'TAGGYDOOBER'
+          imagePullPolicy: IfNotPresent
+          ports:
+          
+          - containerPort: 8080
+            name: service
+          env:
+          - name: OTEL_SERVICE_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.labels['app.kubernetes.io/component']
+          - name: OTEL_COLLECTOR_NAME
+            value: 'otel-demo-otelcol'
+          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+            value: cumulative
+          - name: FRONTEND_PORT
+            value: "8080"
+          - name: FRONTEND_ADDR
+            value: :8080
+          - name: AD_SERVICE_ADDR
+            value: 'otel-demo-adservice:8080'
+          - name: CART_SERVICE_ADDR
+            value: 'otel-demo-cartservice:8080'
+          - name: CHECKOUT_SERVICE_ADDR
+            value: 'otel-demo-checkoutservice:8080'
+          - name: CURRENCY_SERVICE_ADDR
+            value: 'otel-demo-currencyservice:8080'
+          - name: PRODUCT_CATALOG_SERVICE_ADDR
+            value: 'otel-demo-productcatalogservice:8080'
+          - name: RECOMMENDATION_SERVICE_ADDR
+            value: 'otel-demo-recommendationservice:8080'
+          - name: SHIPPING_SERVICE_ADDR
+            value: 'otel-demo-shippingservice:8080'
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://$(OTEL_COLLECTOR_NAME):4317
+          - name: WEB_OTEL_SERVICE_NAME
+            value: frontend-web
+          - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            value: /v1/traces
+          - name: OTEL_RESOURCE_ATTRIBUTES
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+          resources:
+            limits:
+              memory: 200Mi
+          securityContext:
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001

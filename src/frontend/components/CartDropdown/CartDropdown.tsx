@@ -67,6 +67,8 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
     };
   }
 
+  /* eslint-disable */
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   const bananas = (event: any) => {
     return tracer.startActiveSpan('incrementing banana count', async s => {
       console.log('BANANAS');

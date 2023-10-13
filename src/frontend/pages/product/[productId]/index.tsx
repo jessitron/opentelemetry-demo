@@ -75,13 +75,14 @@ const ProductDetail: NextPage = () => {
     }
   );
 
-  const onAddItem = useCallback(async () => {
+  // don't useCallback. Just don't complicate this. it can be a function, what is so terrible
+  const onAddItem = async () => {
     await addItem({
       productId,
       quantity,
     });
     push('/cart');
-  }, [addItem, productId, quantity, push]);
+  };
 
   return (
     <AdProvider

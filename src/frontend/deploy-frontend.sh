@@ -4,7 +4,7 @@ set -e
 set -x
 
 ECR_URL=414852377253.dkr.ecr.$(aws configure get region).amazonaws.com
-REPO_NAME=jess-otel-demo/frontend
+REPO_NAME=frontend
 
 # only needs to be done once per hr or so, but it's SO PAINFUL when I forget
 aws ecr get-login-password --region $(aws configure get region) | docker login --username AWS --password-stdin $ECR_URL

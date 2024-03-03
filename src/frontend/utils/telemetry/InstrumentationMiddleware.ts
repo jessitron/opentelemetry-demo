@@ -10,36 +10,9 @@ import { AttributeNames } from '../enums/AttributeNames';
 const meter = metrics.getMeter('frontend');
 const requestCounter = meter.createCounter('app.frontend.requests');
 
+// make this into a no-op, I don't want a bunch of manual stuff
 const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
-  return async (request, response) => {
-    const { headers, method, url = '', httpVersion } = request;
-    const [target] = url.split('?');
-
-    let span = trace.getSpan(context.active()) as Span;
-
-    if (request.query['sessionId'] != null) {
-      span.setAttribute(AttributeNames.SESSION_ID, request.query['sessionId']);
-    }
-
-    let httpStatus = 200;
-    try {
-      await runWithSpan(span, async () => handler(request, response));
-      httpStatus = response.statusCode;
-    } catch (error) {
-      span.recordException(error as Exception);
-      span.setStatus({ code: SpanStatusCode.ERROR });
-      httpStatus = 500;
-      throw error;
-    } finally {
-      requestCounter.add(1, { method, target, status: httpStatus });
-      span.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, httpStatus);
-    }
-  };
+  return handler;
 };
-
-async function runWithSpan(parentSpan: Span, fn: () => Promise<unknown>) {
-  const ctx = trace.setSpan(context.active(), parentSpan);
-  return await context.with(ctx, fn);
-}
 
 export default InstrumentationMiddleware;

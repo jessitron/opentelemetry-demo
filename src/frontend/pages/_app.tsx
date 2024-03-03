@@ -23,8 +23,7 @@ declare global {
 }
 
 if (typeof window !== 'undefined') {
-  const collector = getCookie('otelCollectorUrl')?.toString() || '';
-  FrontendTracer(collector);
+  FrontendTracer();
 }
 
 const queryClient = new QueryClient();

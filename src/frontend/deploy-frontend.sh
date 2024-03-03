@@ -13,7 +13,7 @@ aws ecr get-login-password --region $(aws configure get region) | docker login -
 # aws ecr create-repository --repository-name $REPO_NAME
 
 # do the build, two levels up, it expects that
-docker build -t $REPO_NAME -f ./Dockerfile ../..
+docker build --platform=linux/amd64 -t $REPO_NAME -f ./Dockerfile ../..
 
 # push to ECR
 sha=$(git rev-parse HEAD)

@@ -8,17 +8,28 @@ const { NEXT_PUBLIC_OTEL_SERVICE_NAME = '', NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACE
 
 // JESS TODO: insert Honeycomb recommended code instead.
 
-import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
-import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
+import {
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+} from '@opentelemetry/sdk-trace-base';
+import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
+import { DocumentLoadInstrumentation } from '@opentelemetry/instrumentation-document-load';
+import { ZoneContextManager } from '@opentelemetry/context-zone';
+import { registerInstrumentations } from '@opentelemetry/instrumentation';
 
-const sdk = new HoneycombWebSDK({
-  endpoint: "/v1/traces",
-  serviceName: NEXT_PUBLIC_OTEL_SERVICE_NAME || "frontend-web",
-  skipOptionsValidation: true, // because we are not including apiKey
-  instrumentations: [getWebAutoInstrumentations()], // add automatic instrumentation
+const provider = new WebTracerProvider();
+provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
+
+provider.register({
+  // Changing default contextManager to use ZoneContextManager - supports asynchronous operations - optional
+  contextManager: new ZoneContextManager(),
 });
-sdk.start();
 
+// Registering instrumentations
+registerInstrumentations({
+  instrumentations: [new DocumentLoadInstrumentation()],
+  
+});
 // but still do these...
 
 // Add session ID:

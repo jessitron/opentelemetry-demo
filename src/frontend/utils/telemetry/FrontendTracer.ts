@@ -2,34 +2,19 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 console.log("jessitron was here ya");
-import {
-  ConsoleSpanExporter,
-  SimpleSpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
-import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
-import { DocumentLoadInstrumentation } from '@opentelemetry/instrumentation-document-load';
-import { ZoneContextManager } from '@opentelemetry/context-zone';
-import { registerInstrumentations } from '@opentelemetry/instrumentation';
 
+import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
+import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
 if (typeof window !== 'undefined') {
 
-  const { NEXT_PUBLIC_OTEL_SERVICE_NAME = '', NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '', IS_SYNTHETIC_REQUEST = '' } =
-    typeof window !== 'undefined' ? window.ENV : {};
-
-  const provider = new WebTracerProvider();
-  provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
-
-  provider.register({
-    // Changing default contextManager to use ZoneContextManager - supports asynchronous operations - optional
-    contextManager: new ZoneContextManager(),
+  const sdk = new HoneycombWebSDK({
+    endpoint: "/v1/traces",
+    serviceName: "frontend-web",
+    skipOptionsValidation: true, // because we are not including apiKey
+    instrumentations: [getWebAutoInstrumentations()], // add automatic instrumentation
   });
-
-  // Registering instrumentations
-  registerInstrumentations({
-    instrumentations: [new DocumentLoadInstrumentation()],
-
-  });
+  sdk.start();
   // but still do these...
 
   // Add session ID:

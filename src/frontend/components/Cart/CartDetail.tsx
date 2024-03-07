@@ -10,6 +10,7 @@ import SessionGateway from '../../gateways/Session.gateway';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
 import * as S from '../../styles/Cart.styled';
+import { wrapWithSpan } from '../../utils/telemetry/FrontendTracingUtils';
 
 const { userId } = SessionGateway.getSession();
 
@@ -62,12 +63,14 @@ const CartDetail = () => {
     [placeOrder, push, selectedCurrency]
   );
 
+  const trackedEmptyCart= wrapWithSpan("Empty Cart button", emptyCart);
+
   return (
     <S.Container>
       <div>
         <S.Header>
           <S.CarTitle>Shopping Cart</S.CarTitle>
-          <S.EmptyCartButton onClick={emptyCart} $type="link">
+          <S.EmptyCartButton onClick={trackedEmptyCart} $type="link">
             Empty Cart
           </S.EmptyCartButton>
         </S.Header>

@@ -26,12 +26,13 @@ const ApiGateway = () => ({
       method: 'POST',
     });
   },
-  emptyCart() {
-    return request<undefined>({
-      url: `${basePath}/cart`,
-      method: 'DELETE',
-      body: { userId },
-    });
+  emptyCart({ otelContext }: OtelContext) {
+    return inSpanContextAsync("DELETE /cart", otelContext, () =>
+      request<undefined>({
+        url: `${basePath}/cart`,
+        method: 'DELETE',
+        body: { userId },
+      }));
   },
 
   getSupportedCurrencyList() {

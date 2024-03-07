@@ -7,10 +7,13 @@ import CheckoutGateway from '../../gateways/rpc/Checkout.gateway';
 import { Empty, PlaceOrderRequest } from '../../protos/demo';
 import { IProductCheckoutItem, IProductCheckout } from '../../types/Cart';
 import ProductCatalogService from '../../services/ProductCatalog.service';
+import { inSpanAsync } from '../../utils/telemetry/FrontendTracingUtils';
+import { Span } from "@opentelemetry/api"
 
 type TResponse = IProductCheckout | Empty;
 
-const handler = async ({ method, body, query }: NextApiRequest, res: NextApiResponse<TResponse>) => {
+const handler = ({ method, body, query }: NextApiRequest, res: NextApiResponse<TResponse>) => inSpanAsync("Place Order does not work here", async (span: Span) => {
+  span.setAttribute("app.checkoutHandler.method", method);
   switch (method) {
     case 'POST': {
       const { currencyCode = '' } = query;
@@ -39,6 +42,6 @@ const handler = async ({ method, body, query }: NextApiRequest, res: NextApiResp
       return res.status(405).send('');
     }
   }
-};
+});
 
 export default InstrumentationMiddleware(handler);

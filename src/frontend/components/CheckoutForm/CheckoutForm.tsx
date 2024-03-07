@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react';
 import { CypressFields } from '../../utils/Cypress';
 import Input from '../Input';
 import * as S from './CheckoutForm.styled';
+import { astronomyShopTracer, inSpan } from '../../utils/telemetry/FrontendTracingUtils';
 
 const currentYear = new Date().getFullYear();
 const yearList = Array.from(new Array(20), (v, i) => i + currentYear);
@@ -27,7 +28,13 @@ interface IProps {
   onSubmit(formData: IFormData): void;
 }
 
-const CheckoutForm = ({ onSubmit }: IProps) => {
+const CheckoutForm = ({ onSubmit: onSubmitProp }: IProps) => {
+
+  const s = astronomyShopTracer.startSpan("Does this ever work?");
+  console.log("Make a span dangit")
+  s.end();
+
+  const onSubmit = (formData) => inSpan("Place Order", () => onSubmitProp(formData))
   const [
     {
       email,

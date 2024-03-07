@@ -19,12 +19,10 @@ const tracer = trace.getTracer('custom bananas');
 
 function doSomeOtherBananaThings(bc: number, desc: string) {
   tracer.startActiveSpan('some other banana things', s => {
-    console.log('BANANAS 2');
     s.setAttribute('app.description', desc);
     s.setAttribute('app.moreBananaCount', bc);
     const result = Promise.resolve(
       trace.getTracer('custom bananas').startActiveSpan('promised banana things', s => {
-        console.log('BANANAS 3');
         s.setAttribute('app.description', desc);
         s.setAttribute('app.moreBananaCount', bc);
         s.end();
@@ -71,7 +69,6 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
   // eslint-disable-line @typescript-eslint/no-explicit-any
   const bananas = (event: any) => {
     return tracer.startActiveSpan('incrementing banana count', async s => {
-      console.log('BANANAS');
       console.log("event.target['active_span'] ", event.target['active_span'], event.target);
       s.setAttribute('app.prevBananaCount', bananaCount);
       setBananaCount(bananaCount + 1);
@@ -83,7 +80,6 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
 
   useEffect(() => {
     tracer.startActiveSpan('noticed banana', s => {
-      console.log('BANANA COUNTED ' + bananaCount);
       s.setAttribute('app.bananaCount', bananaCount);
       setTimeout(() => doSomeOtherBananaThings(bananaCount, '10 ms later'), 10);
       s.end();

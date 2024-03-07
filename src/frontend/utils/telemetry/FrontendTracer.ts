@@ -44,9 +44,6 @@ const FrontendTracer = async () => {
 
   provider.register({
     contextManager,
-    propagator: new CompositePropagator({
-      propagators: [new W3CBaggagePropagator(), new W3CTraceContextPropagator()],
-    }),
   });
 
   registerInstrumentations({

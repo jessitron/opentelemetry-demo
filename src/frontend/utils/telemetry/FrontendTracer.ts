@@ -15,7 +15,7 @@ import { detectResourcesSync } from '@opentelemetry/resources/build/src/detect-r
 const { NEXT_PUBLIC_OTEL_SERVICE_NAME = '', NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '', IS_SYNTHETIC_REQUEST = '' } =
   typeof window !== 'undefined' ? window.ENV : {};
 
-const FrontendTracer = async (collectorString: string) => {
+const FrontendTracer = async () => {
   const { ZoneContextManager } = await import('@opentelemetry/context-zone');
 
   let resource = new Resource({
@@ -33,10 +33,10 @@ const FrontendTracer = async (collectorString: string) => {
   provider.addSpanProcessor(
     new BatchSpanProcessor(
       new OTLPTraceExporter({
-        url: NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || collectorString || 'http://localhost:4318/v1/traces',
+        url: '/v1/traces',
       }), {
-          scheduledDelayMillis : 500
-        }
+      scheduledDelayMillis: 500
+    }
     )
   );
 

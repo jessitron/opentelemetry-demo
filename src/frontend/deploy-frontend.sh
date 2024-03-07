@@ -3,8 +3,14 @@
 set -e
 set -x
 
-git add .
-git commit -m "deploying"
+if [ -z "$(git status --porcelain)" ]; then 
+  # Working directory clean
+  echo "good job making a commit"
+else 
+    git add .
+    git commit -m "deploying"
+    # Uncommitted changes
+fi
 
 ECR_URL=414852377253.dkr.ecr.$(aws configure get region).amazonaws.com
 REPO_NAME=frontend

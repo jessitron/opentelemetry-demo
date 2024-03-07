@@ -12,7 +12,7 @@ import { Span } from "@opentelemetry/api"
 
 type TResponse = IProductCheckout | Empty;
 
-const handler = ({ method, body, query }: NextApiRequest, res: NextApiResponse<TResponse>) => inSpanAsync("Place Order does not work here", async (span: Span) => {
+const handler = ({ method, body, query }: NextApiRequest, res: NextApiResponse<TResponse>) => inSpanAsync("Checkout Handler -- is this ever called?", async (span: Span) => {
   span.setAttribute("app.checkoutHandler.method", method);
   switch (method) {
     case 'POST': {

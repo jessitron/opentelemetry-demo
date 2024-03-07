@@ -7,6 +7,7 @@ import ApiGateway from '../gateways/Api.gateway';
 import { CartItem, OrderResult, PlaceOrderRequest } from '../protos/demo';
 import { IProductCart } from '../types/Cart';
 import { useCurrency } from './Currency.provider';
+import { wrapWithSpan } from '../utils/telemetry/FrontendTracingUtils';
 
 interface IContext {
   cart: IProductCart;
@@ -17,8 +18,8 @@ interface IContext {
 
 export const Context = createContext<IContext>({
   cart: { userId: '', items: [] },
-  addItem: () => {},
-  emptyCart: () => {},
+  addItem: () => { },
+  emptyCart: () => { },
   placeOrder: () => Promise.resolve({} as OrderResult),
 });
 
@@ -53,7 +54,7 @@ const CartProvider = ({ children }: IProps) => {
   );
   const emptyCart = useCallback(() => emptyCartMutation.mutateAsync(), [emptyCartMutation]);
   const placeOrder = useCallback(
-    (order: PlaceOrderRequest) => placeOrderMutation.mutateAsync({ ...order, currencyCode: selectedCurrency }),
+    wrapWithSpan("useCart.placeOrder", (order: PlaceOrderRequest) => placeOrderMutation.mutateAsync({ ...order, currencyCode: selectedCurrency })),
     [placeOrderMutation, selectedCurrency]
   );
 

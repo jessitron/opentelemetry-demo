@@ -18,6 +18,10 @@ export function inSpan<R>(name: string, cb: (s: Span) => R): R {
     });
 }
 
+export function wrapWithSpan<Args, Ret>(name: string, cb: (...args: Args[]) => Ret): (...args: Args[]) => Ret {
+    return (a: Args) => inSpan(name, () => cb(a));
+}
+
 export function inSpanAsync<R>(
     name: string,
     cb: (s: Span) => Promise<R>

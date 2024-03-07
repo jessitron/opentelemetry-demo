@@ -3,6 +3,9 @@
 set -e
 set -x
 
+git add .
+git commit -m "deploying"
+
 ECR_URL=414852377253.dkr.ecr.$(aws configure get region).amazonaws.com
 REPO_NAME=frontend
 

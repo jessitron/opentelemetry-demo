@@ -8,6 +8,7 @@ import { CartItem, OrderResult, PlaceOrderRequest } from '../protos/demo';
 import { IProductCart } from '../types/Cart';
 import { useCurrency } from './Currency.provider';
 import { wrapWithSpan } from '../utils/telemetry/FrontendTracingUtils';
+import { context } from '@opentelemetry/api';
 
 interface IContext {
   cart: IProductCart;
@@ -54,7 +55,8 @@ const CartProvider = ({ children }: IProps) => {
   );
   const emptyCart = useCallback(() => emptyCartMutation.mutateAsync(), [emptyCartMutation]);
   const placeOrder = useCallback(
-    wrapWithSpan("useCart.placeOrder", (order: PlaceOrderRequest) => placeOrderMutation.mutateAsync({ ...order, currencyCode: selectedCurrency })),
+    // what if I pass the context in with the data into mutateAsync, and then use it in ApiGateway.placeOrder ?
+    wrapWithSpan("useCart.placeOrder", (order: PlaceOrderRequest) => placeOrderMutation.mutateAsync({ ...order, otelContext: context.active(), currencyCode: selectedCurrency })),
     [placeOrderMutation, selectedCurrency]
   );
 

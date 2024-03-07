@@ -4,6 +4,7 @@
 import { Ad, Address, Cart, CartItem, Money, PlaceOrderRequest, Product } from '../protos/demo';
 import { IProductCart, IProductCartItem, IProductCheckout } from '../types/Cart';
 import request from '../utils/Request';
+import { OtelContext, inSpanContextAsync } from '../utils/telemetry/FrontendTracingUtils';
 import SessionGateway from './Session.gateway';
 
 const { userId } = SessionGateway.getSession();
@@ -50,13 +51,13 @@ const ApiGateway = () => ({
     });
   },
 
-  placeOrder({ currencyCode, ...order }: PlaceOrderRequest & { currencyCode: string }) {
-    return request<IProductCheckout>({
+  placeOrder({ currencyCode, otelContext, ...order }: PlaceOrderRequest & { currencyCode: string } & OtelContext) {
+    return inSpanContextAsync("place order gateway", otelContext, (s) => request<IProductCheckout>({
       url: `${basePath}/checkout`,
       method: 'POST',
       queryParams: { currencyCode },
       body: order,
-    });
+    }));
   },
 
   listProducts(currencyCode: string) {

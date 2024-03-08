@@ -44,6 +44,7 @@ const FrontendTracer = async () => {
     contextManager: new ZoneContextManager(),
   });
 
+  console.log("Including CWV instrumentation")
   registerInstrumentations({
     tracerProvider: provider,
     instrumentations: [

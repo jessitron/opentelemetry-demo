@@ -1,8 +1,8 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import { CompositePropagator, W3CBaggagePropagator, W3CTraceContextPropagator } from '@opentelemetry/core';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
+import { WebVitalsInstrumentation } from '@honeycombio/opentelemetry-web';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
@@ -40,10 +40,8 @@ const FrontendTracer = async () => {
     )
   );
 
-  const contextManager = new ZoneContextManager();
-
   provider.register({
-    contextManager,
+    contextManager: new ZoneContextManager(),
   });
 
   registerInstrumentations({
@@ -58,6 +56,7 @@ const FrontendTracer = async () => {
           },
         },
       }),
+      new WebVitalsInstrumentation()
     ],
   });
 };

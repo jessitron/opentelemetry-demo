@@ -52,13 +52,13 @@ const ApiGateway = () => ({
     });
   },
 
-  placeOrder({ currencyCode, otelContext, ...order }: PlaceOrderRequest & { currencyCode: string } & OtelContext) {
-    return inSpanContextAsync("place order gateway", otelContext, (s) => request<IProductCheckout>({
+  placeOrder({ currencyCode, ...order }: PlaceOrderRequest & { currencyCode: string }) {
+    return request<IProductCheckout>({
       url: `${basePath}/checkout`,
       method: 'POST',
       queryParams: { currencyCode },
       body: order,
-    }));
+    });
   },
 
   listProducts(currencyCode: string) {

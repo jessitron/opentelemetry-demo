@@ -54,11 +54,11 @@ const CartProvider = ({ children }: IProps) => {
     [addCartMutation, selectedCurrency]
   );
   const emptyCart = useCallback(() => {
-    emptyCartMutation.mutateAsync({ otelContext: context.active()})
+    // what if I pass the context in with the data into mutateAsync, and then use it in ApiGateway.placeOrder ?
+    emptyCartMutation.mutateAsync({ otelContext: context.active() })
   }, [emptyCartMutation]);
   const placeOrder = useCallback(
-    // what if I pass the context in with the data into mutateAsync, and then use it in ApiGateway.placeOrder ?
-    wrapWithSpan("useCart.placeOrder", (order: PlaceOrderRequest) => placeOrderMutation.mutateAsync({ ...order, otelContext: context.active(), currencyCode: selectedCurrency })),
+    (order: PlaceOrderRequest) => placeOrderMutation.mutateAsync({ ...order, currencyCode: selectedCurrency }),
     [placeOrderMutation, selectedCurrency]
   );
 

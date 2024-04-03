@@ -15,28 +15,8 @@ interface IProps {
   productList: IProductCartItem[];
 }
 
-const tracer = trace.getTracer('custom bananas');
-
-function doSomeOtherBananaThings(bc: number, desc: string) {
-  tracer.startActiveSpan('some other banana things', s => {
-    s.setAttribute('app.description', desc);
-    s.setAttribute('app.moreBananaCount', bc);
-    const result = Promise.resolve(
-      trace.getTracer('custom bananas').startActiveSpan('promised banana things', s => {
-        s.setAttribute('app.description', desc);
-        s.setAttribute('app.moreBananaCount', bc);
-        s.end();
-      })
-    );
-    s.end();
-    return result;
-  });
-}
-
 const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
   const ref = useRef<HTMLDivElement>(null);
-
-  const [bananaCount, setBananaCount] = useState(0);
 
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
@@ -65,26 +45,6 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
     };
   }
 
-  /* eslint-disable */
-  // eslint-disable-line @typescript-eslint/no-explicit-any
-  const bananas = (event: any) => {
-    return tracer.startActiveSpan('incrementing banana count', async s => {
-      console.log("event.target['active_span'] ", event.target['active_span'], event.target);
-      s.setAttribute('app.prevBananaCount', bananaCount);
-      setBananaCount(bananaCount + 1);
-      doSomeOtherBananaThings(bananaCount, 'not-awaiting, just calling');
-      s.setAttribute('event.type', event.type);
-      s.end();
-    });
-  };
-
-  useEffect(() => {
-    tracer.startActiveSpan('noticed banana', s => {
-      s.setAttribute('app.bananaCount', bananaCount);
-      setTimeout(() => doSomeOtherBananaThings(bananaCount, '10 ms later'), 10);
-      s.end();
-    });
-  }, [bananaCount]);
 
   return isOpen ? (
     <S.CartDropdown ref={ref} data-cy={CypressFields.CartDropdown}>
@@ -92,7 +52,6 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
         <S.Header>
           <S.Title>Shopping Cart</S.Title>
           <span onClick={onClose}>Close</span>
-          <span onClick={inSpanSnuckOntoTheEvent(bananas)}>Try Something</span>
         </S.Header>
         <S.ItemList>
           {!productList.length && <S.EmptyCart>Your shopping cart is empty</S.EmptyCart>}

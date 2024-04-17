@@ -3,7 +3,7 @@
 set -e
 set -x
 
-export AWS_PROFILE=devrel-sandbox
+export AWS_PROFILE=default
 
 if [ -z "$(git status --porcelain .)" ]; then 
   # Working directory clean

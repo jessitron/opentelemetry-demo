@@ -3,7 +3,9 @@
 set -e
 set -x
 
-if [ -z "$(git status --porcelain)" ]; then 
+export AWS_PROFILE=devrel-sandbox
+
+if [ -z "$(git status --porcelain .)" ]; then 
   # Working directory clean
   echo "good job making a commit"
 else 

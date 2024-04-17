@@ -70,7 +70,7 @@ const CartDetail = () => {
       <div>
         <S.Header>
           <S.CarTitle>Shopping Cart</S.CarTitle>
-          <S.EmptyCartButton onClick={trackedEmptyCart} $type="link">
+          <S.EmptyCartButton data-cy="empty-cart" onClick={trackedEmptyCart} $type="link">
             Empty Cart
           </S.EmptyCartButton>
         </S.Header>

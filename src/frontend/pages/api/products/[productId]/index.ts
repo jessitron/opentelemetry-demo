@@ -16,7 +16,7 @@ const handler = async ({ method, query }: NextApiRequest, res: NextApiResponse<T
 
       const product = await ProductCatalogService.getProduct(productId as string, currencyCode as string);
 
-      let randomDelay = Math.floor(Math.random() * 1000);
+      let randomDelay = Math.floor(Math.random() * 2000);
       if (typeof currencyCode === "string" && currencyCode.startsWith('U')) {
         randomDelay = 0;
       }

@@ -78,9 +78,11 @@ const ApiGateway = () => ({
       randomDelay = 0;
     }
     console.log("Let us be slow " + randomDelay + "ms")
-    trace.getActiveSpan().setAttributes({ 'jess.delay': randomDelay, 'jess.currencyCode': currencyCode});
+    const span =  trace.getTracer("jess").startSpan("jess adds a weird delay");
+    span.setAttributes({ 'jess.delay': randomDelay, 'jess.currencyCode': currencyCode, 'jess.productId': productId});
     return new Promise<Product>((resolve) => {
       setTimeout(() => {
+        span.end();
         resolve(request<Product>({
           url: `${basePath}/products/${productId}`,
           queryParams: { currencyCode },

@@ -8,6 +8,8 @@ import request from '../utils/Request';
 import { OtelContext, inSpanContextAsync } from '../utils/telemetry/FrontendTracingUtils';
 import SessionGateway from './Session.gateway';
 
+// is this even USED??
+
 const { userId } = SessionGateway.getSession();
 
 const basePath = '/api';
@@ -68,13 +70,15 @@ const ApiGateway = () => ({
       queryParams: { currencyCode },
     });
   },
+  
+  // when is this called??
   getProduct(productId: string, currencyCode: string) {
     let randomDelay = Math.floor(Math.random() * 1000);
     if (currencyCode.startsWith('U')) {
       randomDelay = 0;
     }
-    trace.getActiveSpan().setAttributes({ 'jess.delay': randomDelay, 'jess.currencyCode': currencyCode});
     console.log("Let us be slow " + randomDelay + "ms")
+    trace.getActiveSpan().setAttributes({ 'jess.delay': randomDelay, 'jess.currencyCode': currencyCode});
     return new Promise<Product>((resolve) => {
       setTimeout(() => {
         resolve(request<Product>({

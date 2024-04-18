@@ -8,7 +8,7 @@ process.on('unhandledRejection', async (reason, promise) => {
 (async () => {
     try {
         // Launch browser and open a new page
-        const browser = await puppeteer.launch({ headless: false }); // headless: false will show the browser window
+        const browser = await puppeteer.launch({ headless: false, product: 'firefox' }); // headless: false will show the browser window
         const page = await browser.newPage();
 
         const randomWidth = Math.floor(Math.random() * (1920 - 800 + 1)) + 800; // Random width between 800 and 1920
@@ -17,6 +17,7 @@ process.on('unhandledRejection', async (reason, promise) => {
         await page.setViewport({ width: randomWidth, height: randomHeight });
 
         // Navigate to the page
+        await page.setCacheEnabled(false);
         await page.goto('https://otel.jessitron.honeydemo.io'); // Replace 'https://example.com' with your actual website URL
 
 
@@ -25,14 +26,14 @@ process.on('unhandledRejection', async (reason, promise) => {
         while (true) {
             // Wait for the page to load
             try {
-                if (Math.random() > 0.5) {
+                if (Math.random() < 0.5) {
                     console.log("Reload page")
                     await page.evaluate(() => {
                         localStorage.clear();
                         sessionStorage.clear();
                     });
                     // hard-refresh, new session
-                    await page.reload();
+                    await page.reload({ waitUntil: 'networkidle0' }); // I definitely got this from ChatGPT
                     // this may or may not really empty their cart
                 }
                 console.log("Let's pick a product")
@@ -55,7 +56,7 @@ process.on('unhandledRejection', async (reason, promise) => {
 
                 // Sometimes we will change the currency
                 dropdown = await page.waitForSelector('[data-cy=currency-switcher]', waitingOptions);
-                if (dropdown && Math.random() > 0.5) {
+                if (dropdown && Math.random() < 0.0) { // or Neverrrrr... this pops up the dropdown on my screen and is interrupty
                     console.log("Let's change the currency")
                     await page.click('[data-cy=currency-switcher]');
                     // choose a random option from the dropdown
@@ -89,12 +90,12 @@ process.on('unhandledRejection', async (reason, promise) => {
                 consecutiveErrorCount = 0;
 
                 // TODO: sometimes check out
-                if (Math.random() > 0.3) {
+                if (Math.random() < 0.3) {
                     console.log("yeah! buy the stuff!")
                     const checkoutButtonSelector = '[data-cy=checkout-place-order]'
                     await page.waitForSelector(checkoutButtonSelector, waitingOptions); // Wait for the add to cart button to 
                     await page.click(checkoutButtonSelector)
-                } else if (Math.random() > 0.2) {
+                } else if (Math.random() < 0.2) {
                     console.log("empty the cart")
                     const emptyCartButtonSelector = '[data-cy=empty-cart]'
                     await page.waitForSelector(emptyCartButtonSelector, waitingOptions); // Wait for the add to cart button to 

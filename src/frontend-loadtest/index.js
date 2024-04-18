@@ -5,10 +5,24 @@ process.on('unhandledRejection', async (reason, promise) => {
     await delay(1000000000); // Wait for a long time
 });
 
+let browserSpecifier = 'chromium';
+switch(process.env.BROWSER) {
+    case 'firefox':
+        browserSpecifier = 'firefox';
+        break;
+    case 'webkit':
+        browserSpecifier = 'webkit';
+        break;
+    case 'safari':
+        browserSpecifier = '/Applications/Safari.app/Contents/MacOS/Safari';
+        break;
+}
+console.log("Using browser: ", browserSpecifier);
+
 (async () => {
     try {
         // Launch browser and open a new page
-        const browser = await puppeteer.launch({ headless: false, product: 'firefox' }); // headless: false will show the browser window
+        const browser = await puppeteer.launch({ headless: false, product: browserSpecifier }); // headless: false will show the browser window
         const page = await browser.newPage();
 
         const randomWidth = Math.floor(Math.random() * (1920 - 800 + 1)) + 800; // Random width between 800 and 1920
@@ -33,7 +47,9 @@ process.on('unhandledRejection', async (reason, promise) => {
                         sessionStorage.clear();
                     });
                     // hard-refresh, new session
+                    const start = Date.now();
                     await page.reload(waitingOptions); // I definitely got this from ChatGPT
+                    console.log("Reloaded in ", Date.now() - start, "ms");
                     // this may or may not really empty their cart
                 }
                 console.log("Let's pick a product")
@@ -56,7 +72,7 @@ process.on('unhandledRejection', async (reason, promise) => {
 
                 // Sometimes we will change the currency
                 dropdown = await page.waitForSelector('[data-cy=currency-switcher]', waitingOptions);
-                if (dropdown && Math.random() < 0.0) { // or Neverrrrr... this pops up the dropdown on my screen and is interrupty
+                if (dropdown && Math.random() < 0.3) { // or Neverrrrr... this pops up the dropdown on my screen and is interrupty
                     console.log("Let's change the currency")
                     await page.click('[data-cy=currency-switcher]');
                     // choose a random option from the dropdown

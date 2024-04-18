@@ -33,7 +33,7 @@ process.on('unhandledRejection', async (reason, promise) => {
                         sessionStorage.clear();
                     });
                     // hard-refresh, new session
-                    await page.reload(); // I definitely got this from ChatGPT
+                    await page.reload(waitingOptions); // I definitely got this from ChatGPT
                     // this may or may not really empty their cart
                 }
                 console.log("Let's pick a product")

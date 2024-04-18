@@ -9,6 +9,7 @@ if (typeof window !== 'undefined') {
     serviceName: 'frontend-web',
     spanProcessor: new SessionIdProcessor(), // add custom span processor
     instrumentations: [getWebAutoInstrumentations()], // add automatic instrumentation
+    debug: true,
   });
   sdk.start();
 }

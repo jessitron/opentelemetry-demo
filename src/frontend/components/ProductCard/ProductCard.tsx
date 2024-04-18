@@ -25,7 +25,7 @@ const ProductCard = ({
   return (
     <S.Link href={`/product/${id}`}>
       <S.ProductCard data-cy={CypressFields.ProductCard}>
-        <S.Image $src={"/images/products/" + picture} />
+        <S.Image id={"recommend-img-" + id + ""} $src={"/images/products/" + picture} />
         <div>
           <S.ProductName>{name}</S.ProductName>
           <S.ProductPrice>

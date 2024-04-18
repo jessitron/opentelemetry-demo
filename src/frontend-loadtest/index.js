@@ -5,16 +5,13 @@ process.on('unhandledRejection', async (reason, promise) => {
     await delay(1000000000); // Wait for a long time
 });
 
-let browserSpecifier = 'chromium';
+let browserSpecifier = 'chrome';
 switch(process.env.BROWSER) {
     case 'firefox':
         browserSpecifier = 'firefox';
         break;
     case 'webkit':
         browserSpecifier = 'webkit';
-        break;
-    case 'safari':
-        browserSpecifier = '/Applications/Safari.app/Contents/MacOS/Safari';
         break;
 }
 console.log("Using browser: ", browserSpecifier);

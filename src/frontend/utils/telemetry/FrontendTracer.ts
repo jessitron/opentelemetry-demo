@@ -4,6 +4,7 @@ import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations
 import { SessionIdProcessor } from './SessionIdProcessor';
 
 if (typeof window !== 'undefined') {
+  console.log("Starting Honeycomb SDK");
   const sdk = new HoneycombWebSDK({
     apiKey: 'hcaik_01htja3fyhkmj9mf2v1s27ag8wpkeazcvm9rbrzwfpeex8x5dx07rtende',
     serviceName: 'frontend-web',
@@ -40,4 +41,6 @@ if (typeof window !== 'undefined') {
     },
   });
   sdk.start();
+} else {
+  console.log("\n   Not loading SDK because we are the server  \n");
 }

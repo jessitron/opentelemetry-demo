@@ -27,7 +27,7 @@ type OnClickHandler = MouseEventHandler<HTMLSpanElement>; // something
 function inSpanSnuckOntoTheEvent(f: OnClickHandler): OnClickHandler {
   return event => {
     const sneakySpan = event.target['active_span'] as Span;
-    console.log('Product. Looking for a sneaky span. Did I find one? ', sneakySpan);
+   // console.log('Product. Looking for a sneaky span. Did I find one? ', sneakySpan);
     if (!sneakySpan) {
       return f(event);
     }

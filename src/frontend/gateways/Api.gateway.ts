@@ -70,25 +70,30 @@ const ApiGateway = () => ({
       queryParams: { currencyCode },
     });
   },
-  
+
   // when is this called??
   getProduct(productId: string, currencyCode: string) {
-    let randomDelay = Math.floor(Math.random() * 1000);
-    if (currencyCode.startsWith('U')) {
-      randomDelay = 0;
-    }
-    console.log("Let us be slow " + randomDelay + "ms")
-    const span =  trace.getTracer("jess").startSpan("jess adds a weird delay");
-    span.setAttributes({ 'jess.delay': randomDelay, 'jess.currencyCode': currencyCode, 'jess.productId': productId});
-    return new Promise<Product>((resolve) => {
-      setTimeout(() => {
-        span.end();
-        resolve(request<Product>({
-          url: `${basePath}/products/${productId}`,
-          queryParams: { currencyCode },
-        }));
-      }, randomDelay);
-    });
+    // let randomDelay = Math.floor(Math.random() * 1000);
+    // if (currencyCode.startsWith('U')) {
+    //   randomDelay = 0;
+    // }
+    // console.log("Let us be slow " + randomDelay + "ms")
+    // const span =  trace.getTracer("jess").startSpan("jess adds a weird delay");
+    // span.setAttributes({ 'jess.delay': randomDelay, 'jess.currencyCode': currencyCode, 'jess.productId': productId});
+    // return new Promise<Product>((resolve) => {
+    //   setTimeout(() => {
+    //     span.end();
+    //     resolve(request<Product>({
+    //       url: `${basePath}/products/${productId}`,
+    //       queryParams: { currencyCode },
+    //     }));
+    //   }, randomDelay);
+    // });
+
+    return request<Product>({
+      url: `${basePath}/products/${productId}`,
+      queryParams: { currencyCode },
+    })
   },
   listRecommendations(productIds: string[], currencyCode: string) {
     return request<Product[]>({

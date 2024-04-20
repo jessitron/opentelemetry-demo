@@ -30,10 +30,6 @@ interface IProps {
 
 const CheckoutForm = ({ onSubmit: onSubmitProp }: IProps) => {
 
-  const s = astronomyShopTracer.startSpan("Does this ever work?");
-  console.log("Make a span dangit")
-  s.end();
-
   const onSubmit = (formData) => inSpan("Place Order", () => onSubmitProp(formData))
   const [
     {

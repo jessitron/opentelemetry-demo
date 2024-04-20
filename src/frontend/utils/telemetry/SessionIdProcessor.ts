@@ -11,7 +11,7 @@ const { userId } = SessionGateway.getSession();
 let loggedIn = false;
 let loggedInUserId = undefined;
 const r = Math.random();
-console.log("random:", r);
+// console.log("random:", r);
 if (r < 0.45) {
     console.log("Pretending the user is logged in")
     loggedIn = true;

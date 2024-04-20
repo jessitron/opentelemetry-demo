@@ -11,34 +11,34 @@ if (typeof window !== 'undefined') {
     spanProcessor: new SessionIdProcessor(), // add custom span processor
     instrumentations: [getWebAutoInstrumentations()], // add automatic instrumentation
     debug: true,
-    webVitalsInstrumentationConfig: {
-      inp: {
-        reportAllChanges: true,
-        applyCustomAttributes: (vital, span) => { // this function is required? whatever
-          console.log("Received INP", vital.name, vital.value, span.spanContext().traceId);
-        },
-      },
-      cls: {
-        reportAllChanges: true,
-        applyCustomAttributes: (vital, span) => { // this function is required? whatever
-          console.log("Received CLS", vital.name, vital.value, span.spanContext().traceId);
-        },
-      },
-      lcp: {
-        reportAllChanges: true,
-        applyCustomAttributes: (vital, span) => {
-          // from the example
-          console.log("Received LCP", vital.name, vital.value, span.spanContext().traceId);
-          if (vital.value < 1000) {
-            span.setAttribute('lcp.custom_rating', 'good');
-          } else if (vital.value < 3000) {
-            span.setAttribute('lcp.custom_rating', 'needs-improvement');
-          } else {
-            span.setAttribute('lcp.custom_rating', 'poor');
-          }
-        },
-      },
-    },
+    // webVitalsInstrumentationConfig: {
+    //   inp: {
+    //     reportAllChanges: true,
+    //     applyCustomAttributes: (vital, span) => { // this function is required? whatever
+    //       console.log("Received INP", vital.name, vital.value, span.spanContext().traceId);
+    //     },
+    //   },
+    //   cls: {
+    //     reportAllChanges: true,
+    //     applyCustomAttributes: (vital, span) => { // this function is required? whatever
+    //       console.log("Received CLS", vital.name, vital.value, span.spanContext().traceId);
+    //     },
+    //   },
+    //   lcp: {
+    //     reportAllChanges: true,
+    //     applyCustomAttributes: (vital, span) => {
+    //       // from the example
+    //       console.log("Received LCP", vital.name, vital.value, span.spanContext().traceId);
+    //       if (vital.value < 1000) {
+    //         span.setAttribute('lcp.custom_rating', 'good');
+    //       } else if (vital.value < 3000) {
+    //         span.setAttribute('lcp.custom_rating', 'needs-improvement');
+    //       } else {
+    //         span.setAttribute('lcp.custom_rating', 'poor');
+    //       }
+    //     },
+    //   },
+    // },
   });
   sdk.start();
 } else {

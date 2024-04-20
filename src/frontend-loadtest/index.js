@@ -6,7 +6,7 @@ process.on('unhandledRejection', async (reason, promise) => {
 });
 
 let browserSpecifier = 'chrome';
-switch(process.env.BROWSER) {
+switch (process.env.BROWSER) {
     case 'firefox':
         browserSpecifier = 'firefox';
         break;
@@ -16,21 +16,31 @@ switch(process.env.BROWSER) {
 }
 console.log("Using browser: ", browserSpecifier);
 
+async function startNewPage(browser) {
+    const page = await browser.newPage();
+
+    const randomWidth = Math.floor(Math.random() * (1920 - 800 + 1)) + 800; // Random width between 800 and 1920
+    const randomHeight = Math.floor(Math.random() * (2080 - 600 + 1)) + 600; // Random height between 600 and 1080
+
+    await page.setViewport({ width: randomWidth, height: randomHeight });
+
+    // Navigate to the page
+    await page.setCacheEnabled(false);
+    await page.goto('https://otel.jessitron.honeydemo.io'); // Replace 'https://example.com' with your actual website URL
+    await delay(5000); // Wait for 5 seconds (5000 milliseconds)
+    return page;
+}
+
 (async () => {
     try {
         // Launch browser and open a new page
-        const browser = await puppeteer.launch({ headless: false, product: browserSpecifier }); // headless: false will show the browser window
-        const page = await browser.newPage();
+        const browser = await puppeteer.launch({
+            headless: false, // to show the browser or not? It gets interrupty on my screen
+            product: browserSpecifier,
+            protocolTimeout: 10000
+        }); // headless: false will show the browser window
 
-        const randomWidth = Math.floor(Math.random() * (1920 - 800 + 1)) + 800; // Random width between 800 and 1920
-        const randomHeight = Math.floor(Math.random() * (2080 - 600 + 1)) + 600; // Random height between 600 and 1080
-
-        await page.setViewport({ width: randomWidth, height: randomHeight });
-
-        // Navigate to the page
-        await page.setCacheEnabled(false);
-        await page.goto('https://otel.jessitron.honeydemo.io'); // Replace 'https://example.com' with your actual website URL
-
+        let page;
 
         const waitingOptions = { timeout: 10000 };
         consecutiveErrorCount = 0;
@@ -39,13 +49,16 @@ console.log("Using browser: ", browserSpecifier);
             try {
                 if (Math.random() < 0.5) {
                     console.log("Reload page")
-                    await page.evaluate(() => {
-                        localStorage.clear();
-                        sessionStorage.clear();
-                    });
+                    if (page) {
+                        await page.evaluate(() => {
+                            localStorage.clear();
+                            sessionStorage.clear();
+                        });
+                        await page.close();
+                    }
                     // hard-refresh, new session
                     const start = Date.now();
-                    await page.reload(waitingOptions); // I definitely got this from ChatGPT
+                    page = await startNewPage(browser);
                     console.log("Reloaded in ", Date.now() - start, "ms");
                     // this may or may not really empty their cart
                 }
@@ -69,7 +82,7 @@ console.log("Using browser: ", browserSpecifier);
 
                 // Sometimes we will change the currency
                 dropdown = await page.waitForSelector('[data-cy=currency-switcher]', waitingOptions);
-                if (dropdown && Math.random() < 0.3) { // or Neverrrrr... this pops up the dropdown on my screen and is interrupty
+                if (dropdown && Math.random() < 0.1) { // or Neverrrrr... this pops up the dropdown on my screen and is interrupty
                     console.log("Let's change the currency")
                     await page.click('[data-cy=currency-switcher]');
                     // choose a random option from the dropdown

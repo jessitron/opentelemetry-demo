@@ -7,7 +7,7 @@ export type OtelContext = { otelContext: Context }
 export const astronomyShopTracer = trace.getTracer('astronomy-shop');
 
 export function inSpan<R>(name: string, cb: (s: Span) => R): R {
-    console.log("inSpan was called ", name)
+   // console.log("inSpan was called ", name)
     return astronomyShopTracer.startActiveSpan(name, (s) => {
         try {
             return cb(s);

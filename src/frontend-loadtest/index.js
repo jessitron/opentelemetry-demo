@@ -47,7 +47,7 @@ async function startNewPage(browser) {
         while (true) {
             // Wait for the page to load
             try {
-                if (Math.random() < 0.5) {
+                if (!page || Math.random() < 0.5) {
                     console.log("Reload page")
                     if (page) {
                         await page.evaluate(() => {

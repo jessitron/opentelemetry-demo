@@ -4,7 +4,7 @@
 import { NextPage } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { MouseEventHandler, useCallback, useState } from 'react';
+import { MouseEventHandler, useCallback, useState , useEffect} from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Ad from '../../../components/Ad';
 import Footer from '../../../components/Footer';
@@ -59,6 +59,10 @@ const ProductDetail: NextPage = () => {
   const { selectedCurrency } = useCurrency();
   const productId = query.productId as string;
 
+  useEffect(() => {
+    setQuantity(1);
+  }, [productId]);
+
   const {
     data: {
       name,
@@ -112,7 +116,7 @@ const ProductDetail: NextPage = () => {
                 ))}
               </Select>
               <S.AddToCart data-cy={CypressFields.ProductAddToCart} onClick={inSpanSnuckOntoTheEvent(onAddItem)}>
-                <Image src="/icons/Cart.svg" height="15px" width="15px" alt="cart" /> Add To Cart
+                <Image src="/icons/Cart.svg" height="15" width="15" alt="cart" /> Add To Cart
               </S.AddToCart>
             </S.Details>
           </S.Container>

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Context } from "@opentelemetry/api";
-import { ReadableSpan, Span, SpanProcessor } from "@opentelemetry/sdk-trace-web";
 import SessionGateway from "../../gateways/Session.gateway";
 import { AttributeNames } from "../enums/AttributeNames";
+import { ReadableSpan, Span, SpanProcessor } from "@opentelemetry/sdk-trace-base";
 
 const { userId } = SessionGateway.getSession();
 

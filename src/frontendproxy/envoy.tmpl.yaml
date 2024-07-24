@@ -1,7 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 static_resources:
   listeners:
     - address:
@@ -40,15 +39,26 @@ static_resources:
                         - match: { prefix: "/loadgen" }
                           route: { cluster: loadgen, prefix_rewrite: "/" }
                         - match: { prefix: "/otlp-http/" }
-                          route: { cluster: opentelemetry_collector_http, prefix_rewrite: "/" }
+                          route:
+                            {
+                              cluster: opentelemetry_collector_http,
+                              prefix_rewrite: "/",
+                            }
                         - match: { prefix: "/jaeger" }
                           route: { cluster: jaeger }
                         - match: { prefix: "/grafana" }
                           route: { cluster: grafana }
+                        - match: { prefix: "/opensearch" }
+                          route: { cluster: opensearch-ui }
                         - match: { prefix: "/images/" }
                           route: { cluster: imageprovider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
-                          route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
+                          route:
+                            {
+                              cluster: flagservice,
+                              prefix_rewrite: "/",
+                              timeout: 0s,
+                            }
                         - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
@@ -154,6 +164,18 @@ static_resources:
                     socket_address:
                       address: ${GRAFANA_SERVICE_HOST}
                       port_value: ${GRAFANA_SERVICE_PORT}
+    - name: opensearch-ui
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: grafana
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: otel-demo-opensearch-ui-opensearch-dashboards
+                      port_value: 5601
     - name: jaeger
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

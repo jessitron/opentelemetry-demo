@@ -29,7 +29,7 @@ spec:
       serviceAccountName: otel-demo
       containers:
         - name: frontendproxy
-          image: 'ghcr.io/open-telemetry/demo:1.10.0-frontendproxy'
+          image: 'TAGGYDOOBER'
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 8080
